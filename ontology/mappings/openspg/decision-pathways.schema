@@ -1,0 +1,95 @@
+namespace DecisionPathways
+
+DecisionProblem(DecisionProblem): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+    relations:
+        hasObjective(hasObjective): Objective
+        considers(considers): Alternative
+        hasStakeholder(hasStakeholder): Stakeholder
+        hasUncertainty(hasUncertainty): Uncertainty
+        needsInformation(needsInformation): InformationNeed
+
+Stakeholder(Stakeholder): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+
+Objective(Objective): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+
+Alternative(Alternative): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+
+Uncertainty(Uncertainty): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+
+InformationNeed(InformationNeed): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+    relations:
+        addressedBy(addressedBy): ScientificMethod
+
+ScientificMethod(ScientificMethod): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+    relations:
+        implementedBy(implementedBy): ComputationalModel
+        hasAssumption(hasAssumption): Assumption
+
+ComputationalModel(ComputationalModel): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+    relations:
+        requiresDataset(requiresDataset): Dataset
+        requiresVariable(requiresVariable): ScientificVariable
+        evaluatedBy(evaluatedBy): ValidationActivity
+
+Dataset(Dataset): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+
+Evidence(Evidence): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+    relations:
+        supports(supports): ScientificClaim
+
+ScientificClaim(ScientificClaim): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+
+ScientificVariable(ScientificVariable): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+
+Assumption(Assumption): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+
+ValidationActivity(ValidationActivity): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+
+DecisionPathway(DecisionPathway): EntityType
+    properties:
+        description(Description): Text
+            index: TextAndVector
+    relations:
+        formulates(formulates): DecisionProblem

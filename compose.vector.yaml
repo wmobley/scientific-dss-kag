@@ -1,0 +1,18 @@
+services:
+  # Future external-vector experiment. Not used by the default offline retriever.
+  postgres:
+    image: pgvector/pgvector:pg16
+    profiles: ["vector-store"]
+    environment:
+      POSTGRES_USER: scientific_dss
+      POSTGRES_DB: scientific_dss
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env before using Compose}
+    volumes:
+      - vector-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scientific_dss -d scientific_dss"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  vector-data:

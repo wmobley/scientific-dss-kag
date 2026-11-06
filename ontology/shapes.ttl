@@ -1,0 +1,23 @@
+@prefix dp: <https://example.org/scientific-dss/decision-pathways#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+# Structural integrity only. Source hashes and spans are checked against source text by the application.
+dp:EvidenceShape a sh:NodeShape ;
+    sh:targetClass dp:Evidence ;
+    sh:property [ sh:path dp:sourceId ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:minLength 1 ] ;
+    sh:property [ sh:path dp:sourceHash ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "^[a-f0-9]{64}$" ] ;
+    sh:property [ sh:path dp:passage ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:minLength 1 ] ;
+    sh:property [ sh:path dp:start ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 0 ; sh:lessThan dp:end ] ;
+    sh:property [ sh:path dp:end ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ] ;
+    sh:property [ sh:path dp:reviewStatus ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:in ( "candidate" "reviewed" "rejected" ) ] .
+
+dp:DecisionPathwayShape a sh:NodeShape ;
+    sh:targetClass dp:DecisionPathway ;
+    sh:property [ sh:path dp:objective ; sh:minCount 1 ; sh:datatype xsd:string ; sh:minLength 1 ] ;
+    sh:property [ sh:path dp:informationNeed ; sh:minCount 1 ; sh:datatype xsd:string ; sh:minLength 1 ] ;
+    sh:property [ sh:path dp:alternative ; sh:minCount 1 ; sh:datatype xsd:string ; sh:minLength 1 ] ;
+    sh:property [ sh:path dp:uncertainty ; sh:minCount 1 ; sh:datatype xsd:string ; sh:minLength 1 ] .

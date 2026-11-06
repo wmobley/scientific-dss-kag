@@ -1,0 +1,7 @@
+{
+  "objective": "Assess habitat-model evidence needed for an Aedes aegypti surveillance allocation study",
+  "information_needs": ["Occurrence sampling process", "Environmental coverage and units", "Spatial transfer validation"],
+  "alternatives": ["Presence-background method", "Delay modeling until sampling gaps are resolved"],
+  "uncertainties": ["Observation bias", "Spatial transfer", "Habitat suitability does not establish disease risk"],
+  "evidence_ids": ["ev-sampling", "ev-maxent", "ev-predictors"]
+}

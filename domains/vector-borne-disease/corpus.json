@@ -1,0 +1,123 @@
+{
+  "version": "0.1.0",
+  "synthetic": true,
+  "sources": [
+    {
+      "id": "sampling",
+      "title": "Spatial validation and biased occurrences",
+      "text": "Mosquito occurrence observations can reflect sampling effort. Spatially separated validation blocks help assess transfer to unsampled locations. Random splits may overestimate performance when nearby observations are dependent.",
+      "uri": "urn:scientific-dss:synthetic:sampling",
+      "origin": "synthetic_teaching_note",
+      "license": "CC0-1.0"
+    },
+    {
+      "id": "maxent",
+      "title": "Presence-background habitat modeling",
+      "text": "MaxEnt is a presence-background species distribution method. Background selection and observation bias affect interpretation. Habitat suitability is not disease incidence and does not establish transmission risk.",
+      "uri": "urn:scientific-dss:synthetic:maxent",
+      "origin": "synthetic_teaching_note",
+      "license": "CC0-1.0"
+    },
+    {
+      "id": "predictors",
+      "title": "Environmental predictor readiness",
+      "text": "Temperature and precipitation are candidate environmental predictors for Aedes aegypti habitat suitability. Predictor units, spatial resolution, temporal coverage and study region must match the occurrence observations.",
+      "uri": "urn:scientific-dss:synthetic:predictors",
+      "origin": "synthetic_teaching_note",
+      "license": "CC0-1.0"
+    },
+    {
+      "id": "decision",
+      "title": "Decision formulation",
+      "text": "A surveillance allocation decision requires an objective, alternatives, information needs and explicit uncertainty. Compare habitat modeling approaches against the geographic and temporal decision context.",
+      "uri": "urn:scientific-dss:synthetic:decision",
+      "origin": "synthetic_teaching_note",
+      "license": "CC0-1.0"
+    },
+    {
+      "id": "candidate",
+      "title": "Unreviewed extraction example",
+      "text": "A proposed literature extraction suggests that every mosquito habitat map directly predicts human disease burden. This deliberately unsupported teaching assertion must remain a candidate.",
+      "uri": "urn:scientific-dss:synthetic:candidate",
+      "origin": "synthetic_teaching_note",
+      "license": "CC0-1.0"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-sampling",
+      "source_id": "sampling",
+      "source_hash": "6d6d599642bf29f21a320b3630520bd7e180beb1e4a3616b9a9b3c2d21241996",
+      "passage": "Mosquito occurrence observations can reflect sampling effort. Spatially separated validation blocks help assess transfer to unsampled locations. Random splits may overestimate performance when nearby observations are dependent.",
+      "start": 0,
+      "end": 227,
+      "concepts": [
+        "Dataset",
+        "ValidationActivity",
+        "Assumption"
+      ],
+      "review_status": "reviewed",
+      "origin": "synthetic_teaching_note"
+    },
+    {
+      "id": "ev-maxent",
+      "source_id": "maxent",
+      "source_hash": "ba1b0e3b99325312e83e05b00c99dd5313053862144857c7eac5c573efea0540",
+      "passage": "MaxEnt is a presence-background species distribution method. Background selection and observation bias affect interpretation. Habitat suitability is not disease incidence and does not establish transmission risk.",
+      "start": 0,
+      "end": 212,
+      "concepts": [
+        "ScientificMethod",
+        "ComputationalModel",
+        "Assumption"
+      ],
+      "review_status": "reviewed",
+      "origin": "synthetic_teaching_note"
+    },
+    {
+      "id": "ev-predictors",
+      "source_id": "predictors",
+      "source_hash": "76c44d98f895c50e3d64c1c4c10e4e8c300611ba519f73471ffd0902932d919c",
+      "passage": "Temperature and precipitation are candidate environmental predictors for Aedes aegypti habitat suitability. Predictor units, spatial resolution, temporal coverage and study region must match the occurrence observations.",
+      "start": 0,
+      "end": 219,
+      "concepts": [
+        "ScientificVariable",
+        "Dataset",
+        "InformationNeed"
+      ],
+      "review_status": "reviewed",
+      "origin": "synthetic_teaching_note"
+    },
+    {
+      "id": "ev-decision",
+      "source_id": "decision",
+      "source_hash": "f021636a57208001dcb63bb4fbe5f3e3bbed912ef918d67bcc0979cd6927c171",
+      "passage": "A surveillance allocation decision requires an objective, alternatives, information needs and explicit uncertainty. Compare habitat modeling approaches against the geographic and temporal decision context.",
+      "start": 0,
+      "end": 205,
+      "concepts": [
+        "DecisionProblem",
+        "Objective",
+        "Alternative",
+        "Uncertainty"
+      ],
+      "review_status": "reviewed",
+      "origin": "synthetic_teaching_note"
+    },
+    {
+      "id": "ev-candidate",
+      "source_id": "candidate",
+      "source_hash": "3227242870b385f72caa91707283e885914128263c7619983fecea791103e608",
+      "passage": "A proposed literature extraction suggests that every mosquito habitat map directly predicts human disease burden. This deliberately unsupported teaching assertion must remain a candidate.",
+      "start": 0,
+      "end": 187,
+      "concepts": [
+        "ScientificClaim",
+        "Evidence"
+      ],
+      "review_status": "candidate",
+      "origin": "synthetic_teaching_note"
+    }
+  ]
+}

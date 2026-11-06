@@ -1,0 +1,15 @@
+@prefix dp: <https://example.org/scientific-dss/decision-pathways#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Entirely synthetic teaching data. Hash is SHA256 of the exact passage.
+dp:exampleEvidence a dp:Evidence ; dp:sourceId "synthetic-001" ;
+    dp:sourceHash "f3c88a3f7596877e727975066c0345bb898ace88574254d6a5c2c75a3e48f1b1" ;
+    dp:passage "Synthetic mosquito suitability teaching passage." ; dp:start 0 ; dp:end 48 ; dp:reviewStatus "candidate" .
+
+dp:examplePathway a dp:DecisionPathway ;
+    dp:objective "Compare habitat suitability methods" ;
+    dp:informationNeed "Occurrence sampling requirements" ;
+    dp:alternative "Collect additional observations" ;
+    dp:uncertainty "Sampling bias remains unresolved" .

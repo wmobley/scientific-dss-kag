@@ -1,0 +1,137 @@
+{
+  "status": "draft-unverified",
+  "ontology_version": "0.1.0",
+  "namespace": "https://example.org/scientific-dss/decision-pathways#",
+  "spg_namespace": "DecisionPathways",
+  "classes": {
+    "https://example.org/scientific-dss/decision-pathways#DecisionProblem": "DecisionPathways.DecisionProblem",
+    "https://example.org/scientific-dss/decision-pathways#Stakeholder": "DecisionPathways.Stakeholder",
+    "https://example.org/scientific-dss/decision-pathways#Objective": "DecisionPathways.Objective",
+    "https://example.org/scientific-dss/decision-pathways#Alternative": "DecisionPathways.Alternative",
+    "https://example.org/scientific-dss/decision-pathways#Uncertainty": "DecisionPathways.Uncertainty",
+    "https://example.org/scientific-dss/decision-pathways#InformationNeed": "DecisionPathways.InformationNeed",
+    "https://example.org/scientific-dss/decision-pathways#ScientificMethod": "DecisionPathways.ScientificMethod",
+    "https://example.org/scientific-dss/decision-pathways#ComputationalModel": "DecisionPathways.ComputationalModel",
+    "https://example.org/scientific-dss/decision-pathways#Dataset": "DecisionPathways.Dataset",
+    "https://example.org/scientific-dss/decision-pathways#Evidence": "DecisionPathways.Evidence",
+    "https://example.org/scientific-dss/decision-pathways#ScientificClaim": "DecisionPathways.ScientificClaim",
+    "https://example.org/scientific-dss/decision-pathways#ScientificVariable": "DecisionPathways.ScientificVariable",
+    "https://example.org/scientific-dss/decision-pathways#Assumption": "DecisionPathways.Assumption",
+    "https://example.org/scientific-dss/decision-pathways#ValidationActivity": "DecisionPathways.ValidationActivity",
+    "https://example.org/scientific-dss/decision-pathways#DecisionPathway": "DecisionPathways.DecisionPathway"
+  },
+  "relations": [
+    {
+      "rdf_property": "https://example.org/scientific-dss/decision-pathways#hasObjective",
+      "source": "DecisionProblem",
+      "target": "Objective",
+      "spg_relation": "hasObjective",
+      "semantics": "Directed relation only; OWL domain/range inference and constraints not preserved."
+    },
+    {
+      "rdf_property": "https://example.org/scientific-dss/decision-pathways#considers",
+      "source": "DecisionProblem",
+      "target": "Alternative",
+      "spg_relation": "considers",
+      "semantics": "Directed relation only; OWL domain/range inference and constraints not preserved."
+    },
+    {
+      "rdf_property": "https://example.org/scientific-dss/decision-pathways#hasStakeholder",
+      "source": "DecisionProblem",
+      "target": "Stakeholder",
+      "spg_relation": "hasStakeholder",
+      "semantics": "Directed relation only; OWL domain/range inference and constraints not preserved."
+    },
+    {
+      "rdf_property": "https://example.org/scientific-dss/decision-pathways#hasUncertainty",
+      "source": "DecisionProblem",
+      "target": "Uncertainty",
+      "spg_relation": "hasUncertainty",
+      "semantics": "Directed relation only; OWL domain/range inference and constraints not preserved."
+    },
+    {
+      "rdf_property": "https://example.org/scientific-dss/decision-pathways#needsInformation",
+      "source": "DecisionProblem",
+      "target": "InformationNeed",
+      "spg_relation": "needsInformation",
+      "semantics": "Directed relation only; OWL domain/range inference and constraints not preserved."
+    },
+    {
+      "rdf_property": "https://example.org/scientific-dss/decision-pathways#addressedBy",
+      "source": "InformationNeed",
+      "target": "ScientificMethod",
+      "spg_relation": "addressedBy",
+      "semantics": "Directed relation only; OWL domain/range inference and constraints not preserved."
+    },
+    {
+      "rdf_property": "https://example.org/scientific-dss/decision-pathways#implementedBy",
+      "source": "ScientificMethod",
+      "target": "ComputationalModel",
+      "spg_relation": "implementedBy",
+      "semantics": "Directed relation only; OWL domain/range inference and constraints not preserved."
+    },
+    {
+      "rdf_property": "https://example.org/scientific-dss/decision-pathways#requiresDataset",
+      "source": "ComputationalModel",
+      "target": "Dataset",
+      "spg_relation": "requiresDataset",
+      "semantics": "Directed relation only; OWL domain/range inference and constraints not preserved."
+    },
+    {
+      "rdf_property": "https://example.org/scientific-dss/decision-pathways#requiresVariable",
+      "source": "ComputationalModel",
+      "target": "ScientificVariable",
+      "spg_relation": "requiresVariable",
+      "semantics": "Directed relation only; OWL domain/range inference and constraints not preserved."
+    },
+    {
+      "rdf_property": "https://example.org/scientific-dss/decision-pathways#hasAssumption",
+      "source": "ScientificMethod",
+      "target": "Assumption",
+      "spg_relation": "hasAssumption",
+      "semantics": "Directed relation only; OWL domain/range inference and constraints not preserved."
+    },
+    {
+      "rdf_property": "https://example.org/scientific-dss/decision-pathways#supports",
+      "source": "Evidence",
+      "target": "ScientificClaim",
+      "spg_relation": "supports",
+      "semantics": "Directed relation only; OWL domain/range inference and constraints not preserved."
+    },
+    {
+      "rdf_property": "https://example.org/scientific-dss/decision-pathways#evaluatedBy",
+      "source": "ComputationalModel",
+      "target": "ValidationActivity",
+      "spg_relation": "evaluatedBy",
+      "semantics": "Directed relation only; OWL domain/range inference and constraints not preserved."
+    },
+    {
+      "rdf_property": "https://example.org/scientific-dss/decision-pathways#formulates",
+      "source": "DecisionPathway",
+      "target": "DecisionProblem",
+      "spg_relation": "formulates",
+      "semantics": "Directed relation only; OWL domain/range inference and constraints not preserved."
+    }
+  ],
+  "literal_properties": {
+    "strategy": "Provenance and pathway literals remain in canonical RDF/application records; initial SPG entities retain description only.",
+    "omitted": [
+      "sourceId",
+      "sourceHash",
+      "passage",
+      "start",
+      "end",
+      "reviewStatus",
+      "objective",
+      "informationNeed",
+      "alternative",
+      "uncertainty"
+    ]
+  },
+  "losses": [
+    "No OWL reasoning or SHACL validation is imported.",
+    "Cardinality, datatype and controlled-value constraints are enforced outside SPG.",
+    "Canonical RDF identifiers must be retained in the ingestion identifier mapping."
+  ],
+  "upstream_syntax_reference": "https://github.com/OpenSPG/KAG/blob/master/kag/examples/medicine/schema/Medicine.schema"
+}

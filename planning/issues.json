@@ -1,0 +1,56 @@
+[
+  {
+    "key": "work-1",
+    "title": "Verify OpenSPG/KAG schema import and citation-preserving retrieval",
+    "milestone": "M2: Verified KAG and scientific integrations",
+    "body": "Deploy a version-pinned development stack. Import the draft schema, ingest canonical IDs and provenance, implement the KAG adapter, and verify a real query plus unavailable-server behavior. Attach redacted logs and exact versions. No silent fallback.\n\nAcceptance: implementation and relevant behavior tests pass; docs state verification evidence and remaining limitations."
+  },
+  {
+    "key": "work-2",
+    "title": "Verify DYNAMO catalog contract and implement reviewed model crosswalk",
+    "milestone": "M2: Verified KAG and scientific integrations",
+    "body": "Confirm catalog deployment URL/auth and current OpenAPI; exercise models and standardvariables reads, pagination and errors. Map Software/Version/Configuration/Setup and variable identities without asserting model applicability. Include provenance and contract fixtures.\n\nAcceptance: implementation and relevant behavior tests pass; docs state verification evidence and remaining limitations."
+  },
+  {
+    "key": "work-3",
+    "title": "Align scientific variables with a verified SVO vocabulary",
+    "milestone": "M2: Verified KAG and scientific integrations",
+    "body": "Choose an authoritative vocabulary release and stable identifiers. Review units/context mappings for SDM variables. Distinguish vocabulary resolution from workflow transform-specs. Preserve ambiguous/unmapped states and human review.\n\nAcceptance: implementation and relevant behavior tests pass; docs state verification evidence and remaining limitations."
+  },
+  {
+    "key": "work-4",
+    "title": "Implement persistent learned-embedding hybrid retrieval",
+    "milestone": "M2: Verified KAG and scientific integrations",
+    "body": "Add pgvector migrations/indexing and versioned embeddings, source hashes and transactional evidence validation. Compare lexical/vector/hybrid on identical corpora; optional infrastructure is currently unused. Add migration/rollback and retrieval integration tests.\n\nAcceptance: implementation and relevant behavior tests pass; docs state verification evidence and remaining limitations."
+  },
+  {
+    "key": "work-5",
+    "title": "Build licensed SDM corpus and independently adjudicated benchmark",
+    "milestone": "M3: Scientific SDM evaluation pilot",
+    "body": "Collect licensed publications and reviewed exact-span evidence. Separate development and held-out documents/questions. Include no-answer and wrong-context cases, sampling bias, transfer validity and habitat-vs-transmission limitations. Record annotator agreement and adjudication.\n\nAcceptance: implementation and relevant behavior tests pass; docs state verification evidence and remaining limitations."
+  },
+  {
+    "key": "work-6",
+    "title": "Add reviewed scientific claim extraction and promotion workflow",
+    "milestone": "M3: Scientific SDM evaluation pilot",
+    "body": "Extract candidates with source span, DOI/identifier, region, time, assumptions and uncertainty. Keep candidates isolated from authoritative catalog knowledge and retrieval until explicit review. Evaluate extraction separately from retrieval and generation.\n\nAcceptance: implementation and relevant behavior tests pass; docs state verification evidence and remaining limitations."
+  },
+  {
+    "key": "work-7",
+    "title": "Extend student workbench with persistent experiments and human rubrics",
+    "milestone": "M3: Scientific SDM evaluation pilot",
+    "body": "Add isolated projects, saved configurations/results and human relevance/applicability/faithfulness rubrics. Design auth and data retention before multiuser use. Preserve reproducibility metadata and exports.\n\nAcceptance: implementation and relevant behavior tests pass; docs state verification evidence and remaining limitations."
+  },
+  {
+    "key": "work-8",
+    "title": "Design evidence-grounded generation and approved SDM execution boundary",
+    "milestone": "M3: Scientific SDM evaluation pilot",
+    "body": "Add an independently evaluated citation-grounded answer layer with abstention before any execution. Design a separate approved MINT execution workflow; do not equate habitat suitability with disease risk. Require data/readiness and model applicability review.\n\nAcceptance: implementation and relevant behavior tests pass; docs state verification evidence and remaining limitations."
+  },
+  {
+    "key": "work-9",
+    "title": "Register scientific-dss-kag in DSO architecture documentation",
+    "milestone": "M1: Reproducible research foundation",
+    "body": "Review docs/dso-registration.md, choose cluster and confirm proposed local port. Update DSO service page, repo map, port reference and MkDocs nav; regenerate graph. No production deployment or URL is currently assigned.\n\nAcceptance: implementation and relevant behavior tests pass; docs state verification evidence and remaining limitations."
+  }
+]

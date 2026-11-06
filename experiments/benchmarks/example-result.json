@@ -1,0 +1,234 @@
+{
+  "version": "0.1.0",
+  "corpus_hash": "27dbfbdae356e73ea3046a7576271c86daea969936898bcfb4ac543329a6134d",
+  "benchmark_hash": "c5f778a388fdcb44975ae3a274f30a4316a2fb7464db2c57025783ffdf811a71",
+  "ontology_version": "0.1.0",
+  "k": 3,
+  "vector_method": "signed-char-trigram-256",
+  "fusion": "rrf-60",
+  "split": "synthetic-smoke-only",
+  "summary": {
+    "lexical": {
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 0.875
+    },
+    "hybrid": {
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 0.875
+    },
+    "ontology": {
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    }
+  },
+  "rows": [
+    {
+      "case_id": "spatial-validation",
+      "query": "How should occurrence data be validated for spatial transfer?",
+      "context": [
+        "ValidationActivity"
+      ],
+      "mode": "lexical",
+      "retrieved_ids": [
+        "ev-predictors",
+        "ev-sampling"
+      ],
+      "expected_ids": [
+        "ev-sampling"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 0.5
+    },
+    {
+      "case_id": "presence-background",
+      "query": "What assumptions affect MaxEnt background habitat suitability?",
+      "context": [
+        "ScientificMethod"
+      ],
+      "mode": "lexical",
+      "retrieved_ids": [
+        "ev-maxent",
+        "ev-predictors",
+        "ev-decision"
+      ],
+      "expected_ids": [
+        "ev-maxent"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "case_id": "predictor-readiness",
+      "query": "Which temperature and precipitation predictor units and resolution are needed?",
+      "context": [
+        "ScientificVariable"
+      ],
+      "mode": "lexical",
+      "retrieved_ids": [
+        "ev-predictors",
+        "ev-decision",
+        "ev-maxent"
+      ],
+      "expected_ids": [
+        "ev-predictors"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "case_id": "decision-formulation",
+      "query": "What objective and alternatives are needed for surveillance allocation?",
+      "context": [
+        "DecisionProblem"
+      ],
+      "mode": "lexical",
+      "retrieved_ids": [
+        "ev-decision",
+        "ev-predictors",
+        "ev-maxent"
+      ],
+      "expected_ids": [
+        "ev-decision"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "case_id": "spatial-validation",
+      "query": "How should occurrence data be validated for spatial transfer?",
+      "context": [
+        "ValidationActivity"
+      ],
+      "mode": "hybrid",
+      "retrieved_ids": [
+        "ev-predictors",
+        "ev-sampling",
+        "ev-maxent"
+      ],
+      "expected_ids": [
+        "ev-sampling"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 0.5
+    },
+    {
+      "case_id": "presence-background",
+      "query": "What assumptions affect MaxEnt background habitat suitability?",
+      "context": [
+        "ScientificMethod"
+      ],
+      "mode": "hybrid",
+      "retrieved_ids": [
+        "ev-maxent",
+        "ev-predictors",
+        "ev-decision"
+      ],
+      "expected_ids": [
+        "ev-maxent"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "case_id": "predictor-readiness",
+      "query": "Which temperature and precipitation predictor units and resolution are needed?",
+      "context": [
+        "ScientificVariable"
+      ],
+      "mode": "hybrid",
+      "retrieved_ids": [
+        "ev-predictors",
+        "ev-decision",
+        "ev-maxent"
+      ],
+      "expected_ids": [
+        "ev-predictors"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "case_id": "decision-formulation",
+      "query": "What objective and alternatives are needed for surveillance allocation?",
+      "context": [
+        "DecisionProblem"
+      ],
+      "mode": "hybrid",
+      "retrieved_ids": [
+        "ev-decision",
+        "ev-predictors",
+        "ev-sampling"
+      ],
+      "expected_ids": [
+        "ev-decision"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "case_id": "spatial-validation",
+      "query": "How should occurrence data be validated for spatial transfer?",
+      "context": [
+        "ValidationActivity"
+      ],
+      "mode": "ontology",
+      "retrieved_ids": [
+        "ev-sampling"
+      ],
+      "expected_ids": [
+        "ev-sampling"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "case_id": "presence-background",
+      "query": "What assumptions affect MaxEnt background habitat suitability?",
+      "context": [
+        "ScientificMethod"
+      ],
+      "mode": "ontology",
+      "retrieved_ids": [
+        "ev-maxent"
+      ],
+      "expected_ids": [
+        "ev-maxent"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "case_id": "predictor-readiness",
+      "query": "Which temperature and precipitation predictor units and resolution are needed?",
+      "context": [
+        "ScientificVariable"
+      ],
+      "mode": "ontology",
+      "retrieved_ids": [
+        "ev-predictors"
+      ],
+      "expected_ids": [
+        "ev-predictors"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "case_id": "decision-formulation",
+      "query": "What objective and alternatives are needed for surveillance allocation?",
+      "context": [
+        "DecisionProblem"
+      ],
+      "mode": "ontology",
+      "retrieved_ids": [
+        "ev-decision"
+      ],
+      "expected_ids": [
+        "ev-decision"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    }
+  ],
+  "limitations": "Teaching smoke test; no held-out scientific evaluation, generated answers, or evidence of KAG superiority."
+}

@@ -1,0 +1,46 @@
+{
+  "name": "sdm-smoke",
+  "split": "synthetic-smoke-only",
+  "cases": [
+    {
+      "id": "spatial-validation",
+      "query": "How should occurrence data be validated for spatial transfer?",
+      "context": [
+        "ValidationActivity"
+      ],
+      "expected_ids": [
+        "ev-sampling"
+      ]
+    },
+    {
+      "id": "presence-background",
+      "query": "What assumptions affect MaxEnt background habitat suitability?",
+      "context": [
+        "ScientificMethod"
+      ],
+      "expected_ids": [
+        "ev-maxent"
+      ]
+    },
+    {
+      "id": "predictor-readiness",
+      "query": "Which temperature and precipitation predictor units and resolution are needed?",
+      "context": [
+        "ScientificVariable"
+      ],
+      "expected_ids": [
+        "ev-predictors"
+      ]
+    },
+    {
+      "id": "decision-formulation",
+      "query": "What objective and alternatives are needed for surveillance allocation?",
+      "context": [
+        "DecisionProblem"
+      ],
+      "expected_ids": [
+        "ev-decision"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "title": "M1: Reproducible research foundation",
+    "description": "Offline scaffold, portable ontology, provenance and reproducible teaching benchmark."
+  },
+  {
+    "title": "M2: Verified KAG and scientific integrations",
+    "description": "Live versioned KAG, DYNAMO/SVO contracts, persistent hybrid retrieval."
+  },
+  {
+    "title": "M3: Scientific SDM evaluation pilot",
+    "description": "Licensed evidence corpus, independent evaluation and student study."
+  }
+]

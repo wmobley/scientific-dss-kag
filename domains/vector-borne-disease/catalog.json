@@ -1,0 +1,34 @@
+{
+  "models": [
+    {
+      "id": "urn:example:model:maxent",
+      "label": "MaxEnt teaching model record",
+      "origin": "synthetic_fixture",
+      "catalog_verified": false,
+      "method": "presence-background",
+      "requires": [
+        "urn:example:variable:temperature",
+        "urn:example:variable:precipitation"
+      ],
+      "limitations": [
+        "No runnable model or calibrated parameters provided"
+      ]
+    }
+  ],
+  "variables": [
+    {
+      "id": "urn:example:variable:temperature",
+      "label": "near-surface air temperature",
+      "unit": "K",
+      "svo_uri": null,
+      "alignment_status": "requires_expert_mapping"
+    },
+    {
+      "id": "urn:example:variable:precipitation",
+      "label": "precipitation amount",
+      "unit": "mm",
+      "svo_uri": null,
+      "alignment_status": "requires_expert_mapping"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+name: scientific-dss-kag
+services:
+  api:
+    build: .
+    ports:
+      - "127.0.0.1:${DSS_PORT:-8091}:8000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3

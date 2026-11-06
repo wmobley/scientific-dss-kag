@@ -1,0 +1,69 @@
+@prefix dp: <https://example.org/scientific-dss/decision-pathways#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.org/scientific-dss/decision-pathways> a owl:Ontology ;
+    owl:versionInfo "0.1.0" ; rdfs:comment "Synthetic namespace for an initial research ontology; no OWL imports or external reasoning implied." .
+
+dp:DecisionProblem a owl:Class ; rdfs:label "DecisionProblem" ; rdfs:comment "A bounded decision question and its context." .
+dp:Stakeholder a owl:Class ; rdfs:label "Stakeholder" ; rdfs:comment "An actor affected by or participating in a decision." .
+dp:Objective a owl:Class ; rdfs:label "Objective" ; rdfs:comment "A desired outcome used to assess alternatives." .
+dp:Alternative a owl:Class ; rdfs:label "Alternative" ; rdfs:comment "A possible course of action." .
+dp:Uncertainty a owl:Class ; rdfs:label "Uncertainty" ; rdfs:comment "A stated limitation or unresolved aspect of knowledge." .
+dp:InformationNeed a owl:Class ; rdfs:label "InformationNeed" ; rdfs:comment "Information required to address a decision question." .
+dp:ScientificMethod a owl:Class ; rdfs:label "ScientificMethod" ; rdfs:comment "A scientific analytical procedure." .
+dp:ComputationalModel a owl:Class ; rdfs:label "ComputationalModel" ; rdfs:comment "A computational implementation of a scientific method." .
+dp:Dataset a owl:Class ; rdfs:label "Dataset" ; rdfs:comment "An identified collection of observations or derived data." .
+dp:Evidence a owl:Class ; rdfs:label "Evidence" ; rdfs:comment "A passage with source integrity metadata; not proof of scientific truth." .
+dp:ScientificClaim a owl:Class ; rdfs:label "ScientificClaim" ; rdfs:comment "An assertion whose evidential and review status must be assessed." .
+dp:ScientificVariable a owl:Class ; rdfs:label "ScientificVariable" ; rdfs:comment "A named scientific quantity with an external vocabulary alignment when verified." .
+dp:Assumption a owl:Class ; rdfs:label "Assumption" ; rdfs:comment "A condition under which a method or claim is considered applicable." .
+dp:ValidationActivity a owl:Class ; rdfs:label "ValidationActivity" ; rdfs:comment "An activity assessing a model, dataset, claim, or pathway." .
+dp:DecisionPathway a owl:Class ; rdfs:label "DecisionPathway" ; rdfs:comment "A project-specific connection between objectives, information needs and alternatives." .
+
+dp:hasObjective a owl:ObjectProperty ; rdfs:domain dp:DecisionProblem ; rdfs:range dp:Objective .
+
+dp:considers a owl:ObjectProperty ; rdfs:domain dp:DecisionProblem ; rdfs:range dp:Alternative .
+
+dp:hasStakeholder a owl:ObjectProperty ; rdfs:domain dp:DecisionProblem ; rdfs:range dp:Stakeholder .
+
+dp:hasUncertainty a owl:ObjectProperty ; rdfs:domain dp:DecisionProblem ; rdfs:range dp:Uncertainty .
+
+dp:needsInformation a owl:ObjectProperty ; rdfs:domain dp:DecisionProblem ; rdfs:range dp:InformationNeed .
+
+dp:addressedBy a owl:ObjectProperty ; rdfs:domain dp:InformationNeed ; rdfs:range dp:ScientificMethod .
+
+dp:implementedBy a owl:ObjectProperty ; rdfs:domain dp:ScientificMethod ; rdfs:range dp:ComputationalModel .
+
+dp:requiresDataset a owl:ObjectProperty ; rdfs:domain dp:ComputationalModel ; rdfs:range dp:Dataset .
+
+dp:requiresVariable a owl:ObjectProperty ; rdfs:domain dp:ComputationalModel ; rdfs:range dp:ScientificVariable .
+
+dp:hasAssumption a owl:ObjectProperty ; rdfs:domain dp:ScientificMethod ; rdfs:range dp:Assumption .
+
+dp:supports a owl:ObjectProperty ; rdfs:domain dp:Evidence ; rdfs:range dp:ScientificClaim .
+
+dp:evaluatedBy a owl:ObjectProperty ; rdfs:domain dp:ComputationalModel ; rdfs:range dp:ValidationActivity .
+
+dp:formulates a owl:ObjectProperty ; rdfs:domain dp:DecisionPathway ; rdfs:range dp:DecisionProblem .
+
+dp:sourceId a owl:DatatypeProperty ; rdfs:domain dp:Evidence ; rdfs:range xsd:string .
+
+dp:sourceHash a owl:DatatypeProperty ; rdfs:domain dp:Evidence ; rdfs:range xsd:string .
+
+dp:passage a owl:DatatypeProperty ; rdfs:domain dp:Evidence ; rdfs:range xsd:string .
+
+dp:start a owl:DatatypeProperty ; rdfs:domain dp:Evidence ; rdfs:range xsd:integer .
+
+dp:end a owl:DatatypeProperty ; rdfs:domain dp:Evidence ; rdfs:range xsd:integer .
+
+dp:reviewStatus a owl:DatatypeProperty ; rdfs:domain dp:Evidence ; rdfs:range xsd:string .
+
+dp:objective a owl:DatatypeProperty ; rdfs:domain dp:DecisionPathway ; rdfs:range xsd:string .
+
+dp:informationNeed a owl:DatatypeProperty ; rdfs:domain dp:DecisionPathway ; rdfs:range xsd:string .
+
+dp:alternative a owl:DatatypeProperty ; rdfs:domain dp:DecisionPathway ; rdfs:range xsd:string .
+
+dp:uncertainty a owl:DatatypeProperty ; rdfs:domain dp:DecisionPathway ; rdfs:range xsd:string .
