@@ -77,3 +77,10 @@ Current task request supplies scope and explicit proceed instruction. Publishing
 - Alternatives rejected: Content-Length-only limit; relaxed application-wide CSP; optional database credentials in base Compose.
 - User feedback: continue instruction applies; no live integration success inferred.
 - Impact: optional database moved to compose.vector.yaml; Swagger uses route-specific nonce/CDN policy; actual streamed bytes capped; metric ranks retained. DSO registration stays a concrete proposal/tracked follow-up because its separate checkout has existing unrelated edits and cluster/port assignment is unconfirmed. Live KAG/DYNAMO/SVO and scientific validation remain unverified as designed. No LLM generation/extraction or model execution in this first scaffold.
+
+### 2026-11-06 - Publication verified
+- Decision: initial scaffold published to https://github.com/wmobley/scientific-dss-kag, public main branch.
+- Reason: user-selected destination, implementation/test/QA complete.
+- Alternatives rejected: publishing into an unrelated organization/repository.
+- User feedback: explicit public destination selection; original request authorizes creation/push/issues/milestones.
+- Impact: initial commit bd0e96b; hosted Python 3.12/3.13 CI successful; three milestones and nine issues created with immediate Research Dashboard additions. No external scientific service was mutated or model executed.
