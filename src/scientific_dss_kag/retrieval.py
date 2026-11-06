@@ -3,7 +3,7 @@ import hashlib
 import math
 import re
 from collections import Counter
-from .models import Evidence, Mode, RetrievalRequest
+from .models import Backend, Evidence, Mode, RetrievalRequest
 from .resources import read_json
 
 CONCEPTS = frozenset("DecisionProblem Stakeholder Objective Alternative Uncertainty InformationNeed ScientificMethod ComputationalModel Dataset Evidence ScientificClaim ScientificVariable Assumption ValidationActivity DecisionPathway".split())
@@ -56,21 +56,32 @@ class Retriever:
             validate_evidence(e, self.sources)
         self.corpus_hash = hashlib.sha256(__import__("json").dumps(self.corpus, sort_keys=True).encode()).hexdigest()
 
-    def retrieve(self, request: RetrievalRequest):
+    def retrieve(self, request: RetrievalRequest, provider=None):
         if request.mode == Mode.kag:
             raise IntegrationUnavailable("KAG schema import and query have not been verified")
         if request.mode == Mode.ontology and not request.context:
             raise ValueError("ontology mode requires explicit decision context")
+        if request.backend == Backend.openai and request.mode == Mode.lexical:
+            raise ValueError("lexical mode uses the offline backend")
+        if request.backend == Backend.openai and provider is None:
+            raise IntegrationUnavailable("OpenAI provider is unavailable")
         # Candidate assertions never enter retrieval implicitly.
-        candidates = [e for e in self.evidence if e.review_status == "reviewed"]
+        reviewed = [e for e in self.evidence if e.review_status == "reviewed"]
+        candidates = reviewed
         if request.mode == Mode.ontology:
             candidates = [e for e in candidates if set(e.concepts) & set(request.context)]
         query_terms = Counter(tokens(request.query))
         def lexical(e):
             words = Counter(tokens(e.passage))
             return sum(min(n, words[t]) for t, n in query_terms.items()) / (len(words) or 1)
+        embedding_usage = []
+        provider_scores = {}
+        if request.backend == Backend.openai and candidates:
+            provider_scores, embedding_usage = provider.embedding_scores(request.query, reviewed, self.corpus_hash)
         qv = vector(request.query)
         def cosine(e):
+            if request.backend == Backend.openai:
+                return provider_scores.get(e.id, 0)
             return sum(a*b for a,b in zip(qv, vector(e.passage)))
         lex = sorted(((lexical(e), e) for e in candidates), key=lambda x: (-x[0], x[1].id))
         lex = [(s,e) for s,e in lex if s > 0]
@@ -84,8 +95,11 @@ class Retriever:
                 for rank, (_, e) in enumerate(ranking, 1):
                     scores[e.id] += 1/(60+rank)
             ranked = sorted(((scores[e.id],e) for e in candidates if scores[e.id]), key=lambda x: (-x[0], x[1].id))
-        return {"mode": request.mode, "query": request.query, "context": request.context,
+        method = "token-overlap" if request.mode == Mode.lexical else "rrf(token-overlap,signed-char-trigram-256)"
+        if request.backend == Backend.openai:
+            method = f"rrf(token-overlap,openai:{provider.settings.embedding_model})"
+        return {"mode": request.mode, "backend": request.backend, "embedding_usage": embedding_usage, "query": request.query, "context": request.context,
                 "corpus_hash": self.corpus_hash, "synthetic": True,
-                "method": "token-overlap" if request.mode == Mode.lexical else "rrf(token-overlap,signed-char-trigram-256)",
+                "method": method,
                 "results": [{"score": s, "evidence": e.model_dump(), "source": self.sources[e.source_id]} for s,e in ranked[:request.k]],
                 "limitations": "Synthetic teaching corpus; ranking scores are not probabilities or scientific confidence. No generated answer or SDM execution."}

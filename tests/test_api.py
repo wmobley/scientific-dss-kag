@@ -1,11 +1,12 @@
 import pytest
 from fastapi.testclient import TestClient
 from scientific_dss_kag.api import create_app
+from scientific_dss_kag.settings import OpenAISettings
 
 
 @pytest.fixture
 def client():
-    with TestClient(create_app()) as c:
+    with TestClient(create_app(settings=OpenAISettings())) as c:
         yield c
 
 

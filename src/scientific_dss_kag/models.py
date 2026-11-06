@@ -13,9 +13,15 @@ class Mode(StrEnum):
     kag = "kag"
 
 
+class Backend(StrEnum):
+    offline = "offline"
+    openai = "openai"
+
+
 class RetrievalRequest(StrictModel):
     query: str = Field(min_length=1, max_length=2000)
     mode: Mode = Mode.hybrid
+    backend: Backend = Backend.offline
     k: int = Field(default=3, ge=1, le=20)
     context: list[str] = Field(default_factory=list, max_length=15)
 

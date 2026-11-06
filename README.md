@@ -2,7 +2,7 @@
 
 A reusable **Decision Pathways Ontology guided scientific DSS research testbed**. The first teaching domain is vector-borne disease species distribution modeling (SDM).
 
-**Version 0.1 is an offline, runnable scaffold.** It includes a portable OWL/RDF ontology, SHACL validation, a draft OpenSPG schema, FastAPI, a student workbench, traceable synthetic evidence and reproducible retrieval comparisons. OpenSPG/KAG, DYNAMO and SVO are **not live-verified**. There is no LLM answer generation, automated scientific extraction, model execution or disease risk prediction.
+**Version 0.1 is an offline, runnable scaffold.** It includes a portable OWL/RDF ontology, SHACL validation, a draft OpenSPG schema, FastAPI, a student workbench, traceable synthetic evidence and reproducible retrieval comparisons. OpenSPG/KAG, DYNAMO and SVO are **not live-verified**. Opt-in OpenAI embeddings and evidence-cited answer generation are implemented with mocked contract tests; live OpenAI verification requires a local API key. There is no automated scientific extraction, model execution or disease risk prediction.
 
 ## Run locally
 
@@ -24,11 +24,15 @@ curl -s http://127.0.0.1:8091/retrieve -H 'Content-Type: application/json' \
   -d '{"query":"How should occurrence observations be validated?","mode":"ontology","context":["ValidationActivity"],"k":3}'
 ```
 
+## Use OpenAI APIs
+
+See [OpenAI setup](docs/openai.md). Put your key only in the ignored **local** `.env` and set `DSS_OPENAI_ENABLED=true`, then restart. The workbench offers explicit paid semantic-retrieval and cited-answer actions. Models default to `text-embedding-3-small` and `gpt-4.1-mini`, configurable server-side. No keys go to the browser or GitHub. Default tests and the shared benchmark remain offline.
+
 ## Run with Compose
 
 ```bash
 cp .env.example .env
-# Set a local random POSTGRES_PASSWORD in .env; optional vector profile uses it.
+# Set a local random POSTGRES_PASSWORD only if using the optional vector override.
 docker compose up --build
 ```
 
@@ -41,7 +45,7 @@ The API binds only to localhost. `docker compose -f compose.yaml -f compose.vect
 - `ontology`: the hybrid method, filtered by explicitly selected ontology classes.
 - `kag`: returns HTTP 503 until real schema loading and queries are implemented and verified.
 
-These are teaching baselines, not full conventional generative RAG, learned semantic embeddings or graph reasoning. The four synthetic benchmark cases test mechanics; their scores do not demonstrate scientific effectiveness. Ontology context is supplied independently of relevance judgments.
+The default offline modes are teaching baselines. An explicit `backend: openai` option supplies learned semantic embeddings for hybrid and ontology retrieval. The separate `/answer` route adds OpenAI generation; none of these modes implements graph reasoning. The four synthetic benchmark cases test mechanics; their scores do not demonstrate scientific effectiveness. Ontology context is supplied independently of relevance judgments.
 
 All retrieved passages carry exact source spans and SHA-256 hashes. Candidate assertions are excluded. The word “reviewed” in the bundled fixtures denotes teaching-fixture eligibility, **not expert scientific review**. Habitat suitability must not be interpreted as disease incidence or transmission risk.
 
@@ -56,4 +60,4 @@ All retrieved passages carry exact source spans and SHA-256 hashes. Candidate as
 
 ## Boundaries
 
-This local demo has no authentication, multiuser storage, external ingestion endpoint, automatic knowledge promotion or production deployment. The configured catalog Python client is read-only and tested with mocked HTTP contracts. SVO identifiers in fixtures remain unset until expert alignment. No secrets belong in source control. See [verification](docs/verification.md) for checks actually performed and outstanding work.
+This local demo has no authentication, multiuser storage, external ingestion endpoint, automatic knowledge promotion or production deployment. The configured catalog Python client is read-only and tested with mocked HTTP contracts. SVO identifiers in fixtures remain unset until expert alignment. OpenAI is optional, server-only and bounded; paid operations require explicit requests. No secrets belong in source control. See [verification](docs/verification.md) for checks actually performed and outstanding work.

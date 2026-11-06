@@ -14,9 +14,12 @@ function text(tag, value, className) {
 $('compare').onclick = async () => {
   $('compare').disabled = true; $('results').replaceChildren(); $('status').textContent = 'Retrieving evidence…';
   try {
-    const runs = await Promise.all(['lexical','hybrid','ontology'].map(mode => post('/retrieve',{query:$('query').value,mode,k:Number($('k').value),context:[$('context').value]})));
+    const runs = [];
+    for (const mode of ['lexical','hybrid','ontology']) {
+      runs.push(await post('/retrieve',{query:$('query').value,mode,backend:mode === 'lexical' ? 'offline' : $('backend').value,k:Number($('k').value),context:[$('context').value]}));
+    }
     for (const run of runs) {
-      const column = text('div','', 'column'); column.append(text('h3',run.mode));
+      const column = text('div','', 'column'); column.append(text('h3',run.mode),text('p',run.method,'meta'));
       if (!run.results.length) column.append(text('p','No matching reviewed evidence.'));
       for (const result of run.results) {
         const e = result.evidence, item = text('article','', 'evidence');
@@ -45,4 +48,20 @@ $('download').onclick = () => {
   const url=URL.createObjectURL(new Blob([JSON.stringify(lastRun,null,2)],{type:'application/json'}));
   const link=document.createElement('a'); link.href=url;link.download='scientific-dss-benchmark.json';link.click();URL.revokeObjectURL(url);
 };
-fetch('/integrations').then(r=>r.json()).then(data=>{$('integrations').textContent=JSON.stringify(data,null,2);}).catch(error=>{$('integrations').textContent=error.message;});
+$('answer').onclick = async () => {
+  $('answer').disabled=true; $('answer-result').replaceChildren(text('p','Requesting cited claims…'));
+  try {
+    const result=await post('/answer',{query:$('query').value,mode:'ontology',backend:$('backend').value,k:Number($('k').value),context:[$('context').value]});
+    const panel=$('answer-result'); panel.replaceChildren(text('h3',result.status));
+    for (const claim of result.claims) panel.append(text('p',claim.text),text('p',`Evidence: ${claim.evidence_ids.join(', ')}`,'meta'));
+    for (const citation of result.citations) panel.append(text('p',`${citation.evidence.id} · ${citation.source.title}: ${citation.evidence.passage}`,'meta'));
+    panel.append(text('p',`Gaps: ${result.gaps.join('; ') || 'None reported'}`),text('p',`Uncertainties: ${result.uncertainties.join('; ') || 'None reported'}`),text('p',`Model: ${result.model || result.provider}. Citation membership checked; scientific truth and entailment are not validated.`,'meta'),text('pre',JSON.stringify({usage:result.usage,embedding_usage:result.retrieval.embedding_usage,corpus_hash:result.corpus_hash},null,2)));
+  } catch(error) { $('answer-result').replaceChildren(text('p',error.message)); }
+  finally { $('answer').disabled=false; }
+};
+$('backend').onchange=()=>{$('compare').textContent=$('backend').value === 'openai' ? 'Compare retrieval methods (OpenAI calls are paid)' : 'Compare retrieval methods';};
+fetch('/integrations').then(r=>r.json()).then(data=>{$('integrations').textContent=JSON.stringify(data,null,2);
+  const ready=data.openai && data.openai.state==='enabled' && data.openai.configured;
+  $('answer').disabled=!ready;
+  $('backend').querySelector('option[value="openai"]').disabled=!ready;
+  $('provider-status').textContent=ready ? `OpenAI configured: ${data.openai.response_model} / ${data.openai.embedding_model}. Calls require an explicit action; 60 HTTP attempts per server process.` : 'OpenAI unavailable. Configure the ignored local .env with OPENAI_API_KEY and DSS_OPENAI_ENABLED=true, then restart.';}).catch(error=>{$('integrations').textContent=error.message;});

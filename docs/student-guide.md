@@ -21,3 +21,7 @@ The workbench lets you formulate a pathway, check structural gaps and export the
 ## Contribution workflow
 
 Pick a roadmap issue, describe the expected behavior and review the design before substantial changes. Add focused tests; run pytest and benchmark; document verified behavior and limitations. Never commit credentials, unlicensed PDFs, sensitive observations or unreviewed claims labeled as authoritative. Model execution and external publication require separate authorization.
+
+## OpenAI comparison
+
+When configured, choose OpenAI semantic embeddings for a paid retrieval comparison or request a cited OpenAI answer. The vector selector controls retrieval only; generation is always OpenAI and explicitly paid. Keep offline smoke results separate from semantic-model experiments. Record actual requested/returned model, response ID, corpus hash, context, k and reported usage; provider availability is not evidence of scientific effectiveness. Citation IDs are checked against retrieved passages, but human reviewers still assess support, applicability and uncertainty. The shared benchmark continues using offline vectors; a full OpenAI benchmark is future work. See openai.md before sending real data.

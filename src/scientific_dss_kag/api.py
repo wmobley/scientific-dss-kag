@@ -1,4 +1,5 @@
 import secrets
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.responses import HTMLResponse
@@ -6,18 +7,39 @@ from importlib.resources import files
 from . import __version__
 from .connectors import fixture_catalog, integration_status
 from .evaluation import evaluate
-from .models import EvaluationRequest, Pathway, RetrievalRequest
+from .models import Backend, EvaluationRequest, Pathway, RetrievalRequest
+from .openai_provider import OpenAIProvider, ProviderError
+from .settings import OpenAISettings
 from .retrieval import IntegrationUnavailable, Retriever
 from .validation import validate_pathway
 
 
-def create_app():
-    app = FastAPI(title="Scientific DSS KAG research testbed", version=__version__, docs_url=None, redoc_url=None)
+def require_local_origin(request: Request):
+    host = request.url.hostname
+    if host not in {"127.0.0.1", "localhost", "::1"}:
+        raise HTTPException(403, "OpenAI operations require a trusted localhost Host.")
+    origin = request.headers.get("origin")
+    if origin and origin != f"{request.url.scheme}://{request.url.netloc}":
+        raise HTTPException(403, "OpenAI operations require the same origin.")
+    if request.headers.get("sec-fetch-site") in {"cross-site", "same-site"}:
+        raise HTTPException(403, "Cross-origin OpenAI operations are forbidden.")
+    # CLI requests may omit Origin, but must still use localhost and typed JSON.
+
+
+def create_app(settings=None, provider=None):
+    provider = provider or OpenAIProvider(settings or OpenAISettings.from_env())
+
+    @asynccontextmanager
+    async def lifespan(app):
+        yield
+        provider.close()
+
+    app = FastAPI(title="Scientific DSS KAG research testbed", version=__version__, docs_url=None, redoc_url=None, lifespan=lifespan)
     retriever = Retriever()
 
     @app.middleware("http")
     async def secure_headers(request, call_next):
-        # No URL fetching, RDF parsing, persistence, credentials or model execution APIs.
+        # No arbitrary URL fetching, RDF imports, credential-entry or execution APIs.
         length = request.headers.get("content-length")
         if length and (not length.isdigit() or int(length) > 65536):
             return HTMLResponse("Request too large", status_code=413)
@@ -68,7 +90,7 @@ def create_app():
 
     @app.get("/integrations")
     def integrations():
-        return integration_status()
+        return {**integration_status(), "openai": provider.status()}
 
     @app.get("/catalog/models")
     def models():
@@ -79,13 +101,34 @@ def create_app():
         return {"origin": "synthetic_alignment_fixture", "live_verified": False, "records": fixture_catalog()["variables"]}
 
     @app.post("/retrieve")
-    def retrieve(request: RetrievalRequest):
+    def retrieve(request: RetrievalRequest, http_request: Request):
         try:
+            if request.backend == Backend.openai:
+                require_local_origin(http_request)
+                with provider.operation():
+                    return retriever.retrieve(request, provider)
             return retriever.retrieve(request)
+        except ProviderError as exc:
+            raise HTTPException(exc.status, {"code": exc.code, "message": str(exc)}) from None
         except IntegrationUnavailable as exc:
             raise HTTPException(503, {"code": "integration_unavailable", "message": str(exc)}) from exc
         except ValueError as exc:
             raise HTTPException(422, str(exc)) from exc
+
+    @app.post("/answer")
+    def answer(request: RetrievalRequest, http_request: Request):
+        require_local_origin(http_request)
+        try:
+            with provider.operation():
+                retrieval = retriever.retrieve(request, provider)
+                result = provider.answer(request.query, retrieval)
+                return {**result, "retrieval": retrieval}
+        except ProviderError as exc:
+            raise HTTPException(exc.status, {"code": exc.code, "message": str(exc)}) from None
+        except IntegrationUnavailable as exc:
+            raise HTTPException(503, {"code": "integration_unavailable", "message": str(exc)}) from None
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from None
 
     @app.post("/validate/pathway")
     def validate(pathway: Pathway):

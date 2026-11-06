@@ -7,7 +7,14 @@ name = "scientific-dss-kag"
 version = "0.1.0"
 description = "Decision Pathways guided scientific DSS research testbed"
 requires-python = ">=3.12,<3.15"
-dependencies = ["fastapi==0.162.0", "uvicorn==0.54.0", "httpx==0.28.1", "rdflib==7.6.0", "pyshacl==0.40.2"]
+dependencies = [
+    "fastapi==0.162.0",
+    "uvicorn==0.54.0",
+    "httpx==0.28.1",
+    "rdflib==7.6.0",
+    "pyshacl==0.40.2",
+    "python-dotenv>=1,<2",
+]
 
 [project.optional-dependencies]
 dev = ["pytest==9.2.0", "build==1.6.1"]
