@@ -21,3 +21,9 @@
 - DSO architecture registry changes are proposed in docs/dso-registration.md and tracked as an issue; no changes to the separate checkout were made.
 
 One upstream warning remains: Starlette TestClient deprecates its httpx backend in favor of httpx2. Tests currently pass using the pinned httpx release. This is a future dependency migration, not a failed integration check.
+
+## M2 step 0 — LLM policy, gateway, endpoint (2026-11-06)
+
+- 143 tests pass locally, including policy, gateway (auth, route allowlist, shared rate limit, call cap, 429 pause, no body/key leaks) and chat-completions contracts.
+- Live, through the local gateway to `ai.tejas.tacc.utexas.edu`: `openai-smoke` succeeded (`live_verified: true`) with `gpt-oss-120b` and `E5-Mistral-7B-Instruct`; the answer cited retrieved evidence. 15 upstream calls were counted against a cap of 20.
+- Not verified: behaviour under a real upstream 429 (only mocked), Compose-to-gateway connectivity, answer quality beyond protocol checks, OpenSPG/KAG, DYNAMO, SVO, pgvector (unchanged).

@@ -95,6 +95,8 @@ class OpenAIProvider:
     def status(self):
         return {"state": "enabled" if self.settings.enabled else "disabled",
                 "configured": bool(self.settings.api_key),
+                "endpoint_host": self.settings.endpoint.split("/")[2],
+                "via_gateway": self.settings.endpoint.startswith("http://"),
                 "response_model": self.settings.response_model,
                 "embedding_model": self.settings.embedding_model,
                 "embeddings_verified": self.embeddings_verified,
@@ -115,7 +117,7 @@ class OpenAIProvider:
             self._lock.release()
 
     def _post(self, path, body):
-        if path not in ("embeddings", "responses"):
+        if path not in ("embeddings", "responses", "chat/completions"):
             raise ValueError("Unsupported provider operation")
         if not self.settings.enabled or not self.settings.api_key:
             raise ProviderError("openai_unavailable", "OpenAI is not configured.", 503)
@@ -123,7 +125,9 @@ class OpenAIProvider:
             raise ProviderError("openai_budget_exhausted", "The 60-attempt process budget is exhausted.", 429)
         self.calls += 1  # Count failures too. Entire logical operation holds the lock.
         if self._client is None:
-            self._client = httpx.Client(base_url="https://api.openai.com/v1/", timeout=45,
+            # The loopback gateway may queue requests to respect the shared rate limit, so wait longer.
+            timeout = 180 if self.settings.endpoint.startswith("http://") else 45
+            self._client = httpx.Client(base_url=self.settings.endpoint + "/", timeout=timeout,
                                        follow_redirects=False, trust_env=False, transport=self._transport,
                                        headers={"Authorization": f"Bearer {self.settings.api_key}"})
         try:
@@ -152,7 +156,7 @@ class OpenAIProvider:
         usage = data.get("usage")
         if not isinstance(usage, dict):
             return {"available": False}
-        return {k: v for k, v in usage.items() if k in {"input_tokens", "output_tokens", "prompt_tokens", "total_tokens"} and type(v) is int and v >= 0}
+        return {k: v for k, v in usage.items() if k in {"input_tokens", "output_tokens", "prompt_tokens", "completion_tokens", "total_tokens"} and type(v) is int and v >= 0}
 
     def _embed(self, texts):
         data = self._post("embeddings", {"model": self.settings.embedding_model, "input": texts, "encoding_format": "float"})
@@ -175,6 +179,12 @@ class OpenAIProvider:
         self.embeddings_verified = True
         return vectors, self.usage(data)
 
+    def query_text(self, query):
+        # E5-Mistral expects an instruction on queries (not on documents); other models take raw text.
+        if self.settings.embedding_model.lower().startswith("e5-mistral"):
+            return "Instruct: Given a scientific question, retrieve evidence passages that answer it\nQuery: " + query
+        return query
+
     def embedding_scores(self, query, evidence, corpus_hash):
         if not evidence:
             return {}, []
@@ -191,11 +201,36 @@ class OpenAIProvider:
                 self._cache.popitem(last=False)
             usage.append({"operation": "corpus_embeddings", "usage": batch_usage})
         vectors = self._cache[key]
-        query_vectors, query_usage = self._embed([query])
+        query_vectors, query_usage = self._embed([self.query_text(query)])
         if len(query_vectors[0]) != len(vectors[0]):
             raise ProviderError("openai_invalid_embeddings", "Query and corpus embedding dimensions differ.")
         usage.append({"operation": "query_embedding", "usage": query_usage})
         return {e.id: sum(a*b for a,b in zip(query_vectors[0], v)) for e,v in zip(evidence, vectors)}, usage
+
+    @staticmethod
+    def _chat_texts(data):
+        choice = data["choices"][0]
+        message = choice["message"]
+        if message.get("refusal"):
+            raise ProviderError("openai_refusal", "The model declined to produce an answer.")
+        if choice.get("finish_reason") != "stop" or not isinstance(message.get("content"), str):
+            raise ProviderError("openai_incomplete", "The model did not complete an answer.")
+        return [message["content"]]
+
+    @staticmethod
+    def _responses_texts(data):
+        if data.get("status") != "completed":
+            raise ProviderError("openai_incomplete", "The model did not complete an answer.")
+        texts = []
+        for item in data["output"]:
+            if item.get("type") != "message":
+                continue
+            for content in item.get("content", []):
+                if content.get("type") == "refusal":
+                    raise ProviderError("openai_refusal", "The model declined to produce an answer.")
+                if content.get("type") == "output_text":
+                    texts.append(content["text"])
+        return texts
 
     def answer(self, query, retrieval):
         results = retrieval["results"]
@@ -207,22 +242,20 @@ class OpenAIProvider:
         if sum(len(c["passage"]) for c in context) > 24000:
             raise ProviderError("openai_input_limit", "Retrieved context is too large; reduce k.", 422)
         allowed = {r["evidence"]["id"]: r for r in results}
-        data = self._post("responses", {"model": self.settings.response_model, "store": False,
-                "max_output_tokens": 1200, "instructions": INSTRUCTIONS,
-                "input": [{"role": "user", "content": json.dumps({"question": query, "evidence": context})}],
-                "text": {"format": {"type": "json_schema", "name": "evidence_answer", "strict": True, "schema": answer_schema(allowed)}}})
-        if data.get("status") != "completed":
-            raise ProviderError("openai_incomplete", "OpenAI did not complete an answer.")
+        user_content = json.dumps({"question": query, "evidence": context})
+        schema = {"name": "evidence_answer", "strict": True, "schema": answer_schema(allowed)}
+        if self.settings.response_api == "chat":
+            # Chat Completions is the portable OpenAI-compatible path; reasoning models spend part of the budget thinking.
+            data = self._post("chat/completions", {"model": self.settings.response_model, "max_tokens": 1800,
+                    "messages": [{"role": "system", "content": INSTRUCTIONS}, {"role": "user", "content": user_content}],
+                    "response_format": {"type": "json_schema", "json_schema": schema}})
+        else:
+            data = self._post("responses", {"model": self.settings.response_model, "store": False,
+                    "max_output_tokens": 1200, "instructions": INSTRUCTIONS,
+                    "input": [{"role": "user", "content": user_content}],
+                    "text": {"format": {"type": "json_schema", **schema}}})
         try:
-            texts = []
-            for item in data["output"]:
-                if item.get("type") != "message":
-                    continue
-                for content in item.get("content", []):
-                    if content.get("type") == "refusal":
-                        raise ProviderError("openai_refusal", "OpenAI declined to produce an answer.")
-                    if content.get("type") == "output_text":
-                        texts.append(content["text"])
+            texts = self._chat_texts(data) if self.settings.response_api == "chat" else self._responses_texts(data)
             if len(texts) != 1:
                 raise ValueError("Expected one structured answer")
             answer = GeneratedAnswer.model_validate_json(texts[0])
@@ -234,7 +267,7 @@ class OpenAIProvider:
             model, response_id = data["model"], data["id"]
             if not isinstance(model, str) or not isinstance(response_id, str) or len(model) > 200 or len(response_id) > 200:
                 raise ValueError("Invalid model metadata")
-        except (KeyError, ValueError, TypeError, AttributeError, ValidationError):
+        except (KeyError, IndexError, ValueError, TypeError, AttributeError, ValidationError):
             raise ProviderError("openai_invalid_answer", "OpenAI returned malformed claims or citations outside retrieved evidence.") from None
         self.responses_verified = True
         return {**answer.model_dump(), "citations": [allowed[eid] for eid in sorted(cited)],

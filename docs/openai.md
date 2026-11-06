@@ -1,5 +1,13 @@
 # OpenAI setup and verification
 
+> **Policy (M2):** "OpenAI API" here means the OpenAI-compatible protocol. All runtime LLM and embedding calls go through `OpenAIProvider` (or the LLM gateway) to one configured endpoint whose host is allowlisted in `settings.py` (`api.openai.com`, `ai.tejas.tacc.utexas.edu`). `scientific-dss policy-check` and `tests/test_llm_policy.py` fail on other provider SDKs, unaudited network clients, other providers' env vars or an unlisted endpoint host, and warn when `LANGSMITH_TRACING=true`.
+
+## Endpoints, models and the gateway
+
+- `OPENAI_BASE_URL` selects the endpoint (default `https://api.openai.com/v1`; a bare host gets `/v1`). `OPENAI_RESPONSE_API=chat|responses` selects the answer API; **`chat` is the default** because it is the portable one.
+- Verified on 2026-11-06 against the TACC endpoint: `E5-Mistral-7B-Instruct` embeddings (4096 dimensions) and `gpt-oss-120b` on `/chat/completions` with strict `json_schema` (the schema is enforced: a contradicting prompt still returned the enum value). On that endpoint `/responses` accepted the request but **did not enforce** the schema, and `Qwen3-235B-A22B-Instruct-2507` did not reliably follow it, so use `gpt-oss-120b` with `chat`. E5-Mistral queries get its instruction prefix automatically; passages are embedded raw.
+- The TACC endpoint reportedly allows 100 calls/minute in total across all users. Run the gateway so one limiter covers every consumer: `scientific-dss gateway` (binds 127.0.0.1:8092). It holds `OPENAI_API_KEY`, queues callers to `DSS_LLM_RATE_PER_MINUTE` (default 40), applies an optional `DSS_LLM_MAX_CALLS` cap, pauses on upstream 429 and never resends. Point the app at it with `DSS_GATEWAY_URL=http://127.0.0.1:8092/v1` and a `DSS_GATEWAY_TOKEN` of 16+ characters (the gateway needs the same token). The Compose API service does not yet reach a host gateway; Compose uses the endpoint directly with the in-process 60-attempt budget.
+
 The server supports opt-in OpenAI semantic embeddings and structured, cited answers. There are no API calls at startup, in default tests or in the shared offline benchmark. **Live OpenAI verification is pending a locally configured key.** Mocked contract tests do not prove access to a model or billing account.
 
 ## Configure locally

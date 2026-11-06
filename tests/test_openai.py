@@ -35,7 +35,7 @@ def handler_for(calls, response=None, mutate_embedding=None):
 
 def provider(calls=None, response=None, mutate_embedding=None):
     calls=calls if calls is not None else []
-    return OpenAIProvider(OpenAISettings(enabled=True,api_key=KEY),httpx.MockTransport(handler_for(calls,response,mutate_embedding)))
+    return OpenAIProvider(OpenAISettings(enabled=True,api_key=KEY,response_api='responses'),httpx.MockTransport(handler_for(calls,response,mutate_embedding)))
 
 
 def retrieved():
@@ -78,7 +78,7 @@ def test_cache_invalidates_on_model_and_corpus():
     calls=[];p=provider(calls);r=Retriever();reviewed=[e for e in r.evidence if e.review_status=='reviewed']
     with p.operation():
         p.embedding_scores('x',reviewed,'one');p.embedding_scores('x',reviewed,'two')
-        p.settings=OpenAISettings(enabled=True,api_key=KEY,embedding_model='text-embedding-3-large')
+        p.settings=OpenAISettings(enabled=True,api_key=KEY,embedding_model='text-embedding-3-large',response_api='responses')
         p.embedding_scores('x',reviewed,'two')
     assert len(calls)==6 and len(p._cache)==2
     p.close()
@@ -162,7 +162,7 @@ def test_no_retry_no_error_body_leak(status):
     def handler(request):
         calls.append(request)
         return httpx.Response(status,json={'error':KEY},headers={'Location':'https://evil.example/'})
-    p=OpenAIProvider(OpenAISettings(enabled=True,api_key=KEY),httpx.MockTransport(handler))
+    p=OpenAIProvider(OpenAISettings(enabled=True,api_key=KEY,response_api='responses'),httpx.MockTransport(handler))
     with p.operation(),pytest.raises(ProviderError) as exc:p.answer('x',retrieved())
     assert len(calls)==1 and p.calls==1 and KEY not in str(exc.value)
     p.close()
@@ -170,7 +170,7 @@ def test_no_retry_no_error_body_leak(status):
 
 def test_timeout_and_budget_and_concurrency():
     def handler(request):raise httpx.ReadTimeout(KEY,request=request)
-    p=OpenAIProvider(OpenAISettings(enabled=True,api_key=KEY),httpx.MockTransport(handler))
+    p=OpenAIProvider(OpenAISettings(enabled=True,api_key=KEY,response_api='responses'),httpx.MockTransport(handler))
     with p.operation():
         with pytest.raises(ProviderError) as exc:p.answer('x',retrieved())
         assert KEY not in str(exc.value)

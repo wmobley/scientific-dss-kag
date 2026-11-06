@@ -7,6 +7,8 @@ services:
     environment:
       DSS_OPENAI_ENABLED: ${DSS_OPENAI_ENABLED:-false}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+      OPENAI_RESPONSE_API: ${OPENAI_RESPONSE_API:-chat}
       OPENAI_RESPONSE_MODEL: ${OPENAI_RESPONSE_MODEL:-gpt-4.1-mini}
       OPENAI_EMBEDDING_MODEL: ${OPENAI_EMBEDDING_MODEL:-text-embedding-3-small}
     read_only: true

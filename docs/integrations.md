@@ -35,6 +35,8 @@ Status: **synthetic alignment fixtures only**. Fixture `svo_uri` values are null
 
 Status: **optional Compose scaffold; unused by retrieval**. Provisioning a database does not establish working hybrid RAG. Future work must add migrations, source/evidence indexing, real embedding version records, transactional validation and comparison against the same evaluation corpus.
 
-## OpenAI
+## OpenAI-compatible LLM endpoint
+
+M2 policy: every runtime LLM/embedding call uses the OpenAI-compatible protocol against one allowlisted endpoint, optionally via the local rate-limiting gateway. Live-verified 2026-11-06 against the TACC endpoint (see openai.md and verification.md). Details below describe the adapter.
 
 Status: **implemented REST adapter, mocked contracts verified; live calls unverified until local credentials are configured**. Supports real embeddings, reciprocal-rank hybrid retrieval and Responses strict structured answers with citation membership checks. Optional and disabled by default; no startup or CI calls. See openai.md for local setup, explicit paid actions, usage metadata, quota/cache semantics, data sharing and the opt-in live smoke command. This does not change KAG/DYNAMO/SVO status or establish scientific answer validity.
