@@ -12,6 +12,8 @@ Before marking live KAG verified: record server/toolkit commits and model config
 
 ## DYNAMO Model Catalog
 
+**Update 2026-11-06:** anonymous read-only contract verified against the dev catalog (`https://mintdevapi.pods.portals.tapis.io/v2.0.0`): `/models` (23 records) and `/standardvariables` (692 records, 294 with SVO `sameAs`), paged with `page`/`per_page`; `label`, `description` and `sameAs` are list-valued and `sameAs` is nested. `scientific-dss catalog-verify --domain <name>` (needs `DSS_CATALOG_URL`) re-checks a domain's crosswalk against the live catalog. Not verified: the production host, authenticated reads and writes. The catalog is hydrology/agriculture focused: it has MODFLOW 6 and MODFLOW 2005 and subsidence, compaction and groundwater variables, but no species-distribution models or habitat/occurrence variables, so `groundwater-subsidence` is the domain used to verify the integration and `vector-borne-disease` records documented gaps. Crosswalk entries are unreviewed candidates until a human accepts them. The older notes below predate this check.
+
 Status: **fixture adapter and mocked read-only catalog HTTP client; no live verification**. Authoritative local DSO documentation `services/mint-platform.md` describes the migrated TypeScript/Fastify catalog over Hasura/PostgreSQL. The corresponding `model-catalog-api/openapi.yaml` supports GET `/models` and `/standardvariables`, with `label`, `page`, `per_page`. Production API URL is not documented. The MINT UI URL must not be assumed to be a catalog API.
 
 Operator-only Python example, after confirming deployment contract and obtaining authorized credentials:
@@ -28,6 +30,8 @@ finally:
 No default URL, automatic remote probe or credential reading exists. The bounded first-page result is not a complete catalog synchronization. Before enabling a live adapter, verify auth, schema/version, pagination, standard-variable relationships, catalog-to-ontology identifiers, provenance, timeouts and failure modes. A successful HTTP response is insufficient to validate scientific applicability.
 
 ## SVO
+
+**Update 2026-11-06:** SVO identifiers come from the DYNAMO catalog's `sameAs` links (`http://www.geoscienceontology.org/svo/svl/variable#...`), not from a separate SVO lookup. Crosswalk candidates (`domains/*/crosswalk.json`) copy those URIs and `catalog-verify` confirms they match the live catalog. One candidate (`groundwater__drawdown`) has no SVO link in the catalog and is reported as such. No fixture variable is aligned until a human accepts its entry; fixture `svo_uri` values stay null. The older notes below predate this check.
 
 Status: **synthetic alignment fixtures only**. Fixture `svo_uri` values are null; no ontology identity is fabricated. DSO's `svo-adapter-service` translates semantic variables into workflow inputs. Its documented GET `/transform-specs` is not a general ontology search endpoint. Do not substitute workflow translation for SVO vocabulary resolution. Confirm a vocabulary source/version, align variables with units and context, record mapping confidence and human review, then add a real client and contract tests. Workflow planning/execution is outside this scaffold.
 

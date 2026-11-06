@@ -7,3 +7,5 @@ M2 — Verified scientific integrations: deploy an explicitly versioned OpenSPG/
 M3 — Scientific evaluation and SDM pilot: licensed corpus, independently adjudicated benchmark, extraction and generation evaluation, versioned student experiments and read-only model suitability reports. Running an SDM workflow is a separate approved milestone; no disease-risk decision should rely on this prototype.
 
 Machine-readable milestones and issues are in `planning/`. The publisher validates the destination and Research Dashboard before creating issues; every new issue is immediately added to project 5. Published URLs are saved locally to support resuming without duplicate issues.
+
+Backlog after M2: a read-only `dso-mint` MCP server in `mcp-suite` wrapping the verified DYNAMO catalog contract; evaluate self-hosted Langfuse (or Arize Phoenix) for agent tracing, prompt management and evaluations. See the M2 design spec for rationale.

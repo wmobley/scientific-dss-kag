@@ -1,0 +1,50 @@
+[
+ {
+  "id": "https://w3id.org/okn/i/mint/1a0e8797-5ef0-4e96-ad05-0dc129c60f4c",
+  "type": [
+   "https://w3id.org/okn/o/sdm#CoupledModel"
+  ],
+  "label": [
+   "DroughtPredict"
+  ],
+  "description": [
+   "DoughtPredict uses deep learning to make predictions of SPI on a variety of timescales. \n\nSee the specific version and configuration for information on the deep learning model structure and training/testing data."
+  ]
+ },
+ {
+  "id": "https://w3id.org/okn/i/mint/4aa1883b-bcfb-4c79-8fcb-5f109d0fc971",
+  "type": [
+   "https://w3id.org/okn/o/sdm#Model"
+  ],
+  "label": [
+   "Iowa Flood Center Hillslope Link Model (HLM)"
+  ],
+  "description": [
+   "The HLM uses a calibration-free approach in which a system of ordinary nonlinear differential equations represents the processes of rainfall to runoff translation as well as the transport of water in the river network."
+  ]
+ },
+ {
+  "id": "https://w3id.org/okn/i/mint/b051a492-ad3f-494b-8ae4-53c8a83d3881",
+  "type": [
+   "https://w3id.org/okn/o/sdm#Model"
+  ],
+  "label": [
+   "MODFLOW 6"
+  ],
+  "description": [
+   "Execution-ready configuration for USGS MODFLOW 6 groundwater simulations in MINT. Uses mf6 as the executable and expects an MF6 simulation with mfsim.nam, with optional external WEL and RCH package overrides for GAM workflows.\n\n\n"
+  ]
+ },
+ {
+  "id": "https://w3id.org/okn/i/mint/MODFLOW",
+  "type": [
+   "https://w3id.org/okn/o/sdm#Theory-GuidedModel"
+  ],
+  "label": [
+   "MODFLOW 2005"
+  ],
+  "description": [
+   "Modflow is a popular open-source groundwater flow model distributed by the U.S. Geological survey"
+  ]
+ }
+]

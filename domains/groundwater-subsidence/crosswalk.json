@@ -1,0 +1,146 @@
+{
+ "catalog_source": "DYNAMO dev catalog https://mintdevapi.pods.portals.tapis.io/v2.0.0 (anonymous GET /standardvariables, /models)",
+ "checked_on": "2026-11-06",
+ "catalog_counts": {
+  "standard_variables": 692,
+  "standard_variables_with_svo_sameAs": 294,
+  "models": 23
+ },
+ "status_note": "Candidates are machine-assisted proposals. Nothing here counts as aligned until a human sets review.status to accepted with reviewer, date and accepted_catalog_id.",
+ "entries": [
+  {
+   "kind": "variable",
+   "fixture_id": "urn:example:variable:groundwater-head",
+   "candidates": [
+    {
+     "catalog_id": "https://w3id.org/okn/i/mint/GROUNDWATER__HEAD",
+     "label": "groundwater__head",
+     "svo_uri": "http://www.geoscienceontology.org/svo/svl/variable#%28land_surface%29%40context%7Ebelow_%28ground%40context%7Ein_water%29__head",
+     "confidence": "high",
+     "rationale": "Same quantity: hydraulic head of groundwater; units (m) and datum must be confirmed."
+    }
+   ],
+   "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "date": null,
+    "accepted_catalog_id": null
+   }
+  },
+  {
+   "kind": "variable",
+   "fixture_id": "urn:example:variable:land-subsidence",
+   "candidates": [
+    {
+     "catalog_id": "https://w3id.org/okn/i/mint/land_surface__subsidence",
+     "label": "land_surface__subsidence",
+     "svo_uri": "http://www.geoscienceontology.org/svo/svl/variable#land_surface__subsidence",
+     "confidence": "high",
+     "rationale": "Same concept: lowering of the land surface; confirm sign convention and that it is a length, not a rate."
+    }
+   ],
+   "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "date": null,
+    "accepted_catalog_id": null
+   }
+  },
+  {
+   "kind": "variable",
+   "fixture_id": "urn:example:variable:hydraulic-conductivity",
+   "candidates": [
+    {
+     "catalog_id": "https://w3id.org/okn/i/mint/aquifer__hydraulic_conductivity",
+     "label": "aquifer__hydraulic_conductivity",
+     "svo_uri": "http://www.geoscienceontology.org/svo/svl/variable#aquifer__hydraulic_conductivity",
+     "confidence": "medium",
+     "rationale": "Aquifer hydraulic conductivity; horizontal vs vertical must be specified by an expert."
+    }
+   ],
+   "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "date": null,
+    "accepted_catalog_id": null
+   }
+  },
+  {
+   "kind": "variable",
+   "fixture_id": "urn:example:variable:pumping-rate",
+   "candidates": [
+    {
+     "catalog_id": "https://w3id.org/okn/i/mint/groundwater_well__pumping_volume_flow_rate",
+     "label": "groundwater_well__pumping_volume_flow_rate",
+     "svo_uri": "http://www.geoscienceontology.org/svo/svl/variable#groundwater_well__pumping_volume_flow_rate",
+     "confidence": "medium",
+     "rationale": "Well pumping volume flow rate; sign convention (extraction negative in MODFLOW) must be checked."
+    }
+   ],
+   "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "date": null,
+    "accepted_catalog_id": null
+   }
+  },
+  {
+   "kind": "variable",
+   "fixture_id": "urn:example:variable:drawdown",
+   "candidates": [
+    {
+     "catalog_id": "https://w3id.org/okn/i/mint/wmobley-standard-variable-groundwater-drawdown",
+     "label": "groundwater__drawdown",
+     "svo_uri": null,
+     "confidence": "medium",
+     "rationale": "Groundwater drawdown; reference head for the drawdown must be stated."
+    }
+   ],
+   "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "date": null,
+    "accepted_catalog_id": null
+   }
+  },
+  {
+   "kind": "model",
+   "fixture_id": "urn:example:model:modflow6",
+   "candidates": [
+    {
+     "catalog_id": "https://w3id.org/okn/i/mint/b051a492-ad3f-494b-8ae4-53c8a83d3881",
+     "label": "MODFLOW 6",
+     "svo_uri": null,
+     "confidence": "medium",
+     "rationale": "Catalog record for MODFLOW 6; the fixture assumes the CSUB package, which the catalog record may not specify."
+    }
+   ],
+   "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "date": null,
+    "accepted_catalog_id": null
+   }
+  },
+  {
+   "kind": "model",
+   "fixture_id": "urn:example:model:modflow2005",
+   "candidates": [
+    {
+     "catalog_id": "https://w3id.org/okn/i/mint/MODFLOW",
+     "label": "MODFLOW 2005",
+     "svo_uri": null,
+     "confidence": "medium",
+     "rationale": "Catalog record for MODFLOW 2005; the fixture assumes the SUB package, which the catalog record may not specify."
+    }
+   ],
+   "review": {
+    "status": "unreviewed",
+    "reviewer": null,
+    "date": null,
+    "accepted_catalog_id": null
+   }
+  }
+ ],
+ "gaps": []
+}

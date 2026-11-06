@@ -1,0 +1,46 @@
+{
+  "name": "groundwater-subsidence-smoke",
+  "split": "synthetic-smoke-only",
+  "cases": [
+    {
+      "id": "permanent-subsidence",
+      "query": "How can pumping and head decline cause permanent land subsidence?",
+      "context": [
+        "Assumption"
+      ],
+      "expected_ids": [
+        "ev-gw-drawdown"
+      ]
+    },
+    {
+      "id": "modflow-requirements",
+      "query": "What does MODFLOW need to simulate subsidence from pumping?",
+      "context": [
+        "ScientificMethod"
+      ],
+      "expected_ids": [
+        "ev-gw-modflow"
+      ]
+    },
+    {
+      "id": "observation-reconciliation",
+      "query": "How should displacement and hydraulic head observations be reconciled?",
+      "context": [
+        "ValidationActivity"
+      ],
+      "expected_ids": [
+        "ev-gw-observations"
+      ]
+    },
+    {
+      "id": "pumping-decision",
+      "query": "What objective and alternatives does a pumping limit decision need?",
+      "context": [
+        "DecisionProblem"
+      ],
+      "expected_ids": [
+        "ev-gw-decision"
+      ]
+    }
+  ]
+}

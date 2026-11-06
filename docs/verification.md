@@ -27,3 +27,9 @@ One upstream warning remains: Starlette TestClient deprecates its httpx backend 
 - 143 tests pass locally, including policy, gateway (auth, route allowlist, shared rate limit, call cap, 429 pause, no body/key leaks) and chat-completions contracts.
 - Live, through the local gateway to `ai.tejas.tacc.utexas.edu`: `openai-smoke` succeeded (`live_verified: true`) with `gpt-oss-120b` and `E5-Mistral-7B-Instruct`; the answer cited retrieved evidence. 15 upstream calls were counted against a cap of 20.
 - Not verified: behaviour under a real upstream 429 (only mocked), Compose-to-gateway connectivity, answer quality beyond protocol checks, OpenSPG/KAG, DYNAMO, SVO, pgvector (unchanged).
+
+## M2 DYNAMO catalog and crosswalk (2026-11-06)
+
+- 182 tests pass locally, including contract tests against responses recorded from the dev catalog (paging, list-valued fields, nested `sameAs`, failure modes) and crosswalk validation (missing IDs, wrong SVO URIs, review-state rules).
+- Live, anonymous, GET-only: the dev catalog returned 692 standard variables (294 with SVO `sameAs`) and 23 models. `scientific-dss catalog-verify` passed for `groundwater-subsidence` (7 unreviewed entries; 4 candidates with SVO, 1 without) and `vector-borne-disease` (2 unreviewed entries; documented gaps).
+- Not verified: production catalog host, authenticated reads, writes, human review of any crosswalk entry (none accepted), scientific suitability of any candidate.

@@ -1,0 +1,5 @@
+{
+  "name": "vector-borne-disease",
+  "title": "Vector-borne disease species distribution modeling",
+  "benchmark": "sdm-smoke"
+}

@@ -1,0 +1,22 @@
+{
+  "objective": "Assess the evidence needed to evaluate pumping scenarios against land subsidence risk in a groundwater management study",
+  "information_needs": [
+    "Hydraulic head and displacement observations with reconciled datums",
+    "Aquifer hydraulic conductivity and storage properties",
+    "Calibration of the flow model against observed head"
+  ],
+  "alternatives": [
+    "Simulate scenarios with a subsidence-capable MODFLOW configuration",
+    "Delay scenario analysis until observation datums and calibration are resolved"
+  ],
+  "uncertainties": [
+    "Aquifer property uncertainty",
+    "Future pumping demand",
+    "Simulated subsidence is a conditional projection, not a forecast"
+  ],
+  "evidence_ids": [
+    "ev-gw-modflow",
+    "ev-gw-observations",
+    "ev-gw-decision"
+  ]
+}

@@ -2,7 +2,7 @@ import hashlib
 import json
 from . import __version__
 from .models import Mode, RetrievalRequest
-from .resources import read_json
+from .domain import benchmark_cases
 
 
 def metrics(retrieved: list[str], expected: list[str], k: int):
@@ -16,7 +16,7 @@ def metrics(retrieved: list[str], expected: list[str], k: int):
 
 
 def evaluate(retriever, k=3, cases=None):
-    cases = cases if cases is not None else read_json("benchmarks/sdm-smoke.json")["cases"]
+    cases = cases if cases is not None else benchmark_cases(retriever.domain)
     if not cases:
         raise ValueError("benchmark requires cases")
     available = {e.id for e in retriever.evidence if e.review_status == "reviewed"}

@@ -13,6 +13,24 @@ DEFAULT_BASE_URL = "https://api.openai.com/v1"
 ALLOWED_LLM_HOSTS = frozenset({"api.openai.com", "ai.tejas.tacc.utexas.edu"})
 LOOPBACK_HOSTS = frozenset({"127.0.0.1", "localhost", "::1"})
 MODEL_PATTERN = r"[a-zA-Z0-9_.:-]{1,100}"
+# DYNAMO/MINT catalog API hosts (read-only GETs). The production host is not documented; add it when verified.
+ALLOWED_CATALOG_HOSTS = frozenset({"mintdevapi.pods.portals.tapis.io"})
+
+
+def catalog_url_from_env():
+    """DSS_CATALOG_URL, https only, host allowlisted. There is deliberately no default."""
+    load_dotenv(dotenv_path=".env", override=False)
+    raw = os.environ.get("DSS_CATALOG_URL", "").strip()
+    if not raw:
+        raise ValueError("Set DSS_CATALOG_URL to the catalog API base (for example the dev catalog /v2.0.0 URL)")
+    try:
+        parts = urlsplit(raw)
+        host = parts.hostname
+    except ValueError:
+        raise ValueError("Invalid catalog URL") from None
+    if parts.scheme != "https" or host not in ALLOWED_CATALOG_HOSTS or parts.username or parts.password or parts.query or parts.fragment:
+        raise ValueError("Catalog URL must be https, without credentials, on an allowlisted catalog host")
+    return f"{parts.scheme}://{parts.netloc}{parts.path.rstrip('/')}"
 
 
 def normalize_base_url(value, *, allow_loopback=True):

@@ -34,7 +34,10 @@ def test_kag_unavailable_and_catalog_honesty(client):
     response = client.post('/retrieve',json={'query':'x','mode':'kag'})
     assert response.status_code == 503
     assert response.json()['detail']['code'] == 'integration_unavailable'
-    assert all(v['live_verified'] is False for v in client.get('/integrations').json().values())
+    status = client.get('/integrations').json()
+    assert [status[k]['live_verified'] for k in ('kag', 'svo', 'pgvector')] == [False, False, False]
+    assert status['catalog']['live_verified'] is True and 'production host' in status['catalog']['scope']
+    assert 'unreviewed' in status['svo']['state']
     assert client.get('/catalog/models').json()['origin'] == 'synthetic_fixture'
 
 

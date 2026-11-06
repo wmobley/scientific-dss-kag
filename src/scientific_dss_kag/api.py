@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 from importlib.resources import files
 from . import __version__
 from .connectors import fixture_catalog, integration_status
+from .domain import domain_name, load
 from .evaluation import evaluate
 from .models import Backend, EvaluationRequest, Pathway, RetrievalRequest
 from .openai_provider import OpenAIProvider, ProviderError
@@ -26,7 +27,8 @@ def require_local_origin(request: Request):
     # CLI requests may omit Origin, but must still use localhost and typed JSON.
 
 
-def create_app(settings=None, provider=None):
+def create_app(settings=None, provider=None, domain=None):
+    domain = domain_name(domain)
     provider = provider or OpenAIProvider(settings or OpenAISettings.from_env())
 
     @asynccontextmanager
@@ -35,7 +37,7 @@ def create_app(settings=None, provider=None):
         provider.close()
 
     app = FastAPI(title="Scientific DSS KAG research testbed", version=__version__, docs_url=None, redoc_url=None, lifespan=lifespan)
-    retriever = Retriever()
+    retriever = Retriever(domain=domain)
 
     @app.middleware("http")
     async def secure_headers(request, call_next):
@@ -86,7 +88,7 @@ def create_app(settings=None, provider=None):
 
     @app.get("/health")
     def health():
-        return {"status": "ok", "version": __version__, "mode": "offline_synthetic", "corpus_hash": retriever.corpus_hash}
+        return {"status": "ok", "version": __version__, "mode": "offline_synthetic", "domain": domain, "corpus_hash": retriever.corpus_hash}
 
     @app.get("/integrations")
     def integrations():
@@ -94,11 +96,15 @@ def create_app(settings=None, provider=None):
 
     @app.get("/catalog/models")
     def models():
-        return {"origin": "synthetic_fixture", "live_verified": False, "records": fixture_catalog()["models"]}
+        return {"origin": "synthetic_fixture", "live_verified": False, "records": fixture_catalog(domain)["models"]}
 
     @app.get("/catalog/variables")
     def variables():
-        return {"origin": "synthetic_alignment_fixture", "live_verified": False, "records": fixture_catalog()["variables"]}
+        return {"origin": "synthetic_alignment_fixture", "live_verified": False, "records": fixture_catalog(domain)["variables"]}
+
+    @app.get("/catalog/crosswalk")
+    def crosswalk():
+        return {"domain": domain, "review_required": True, **load(domain, "crosswalk.json")}
 
     @app.post("/retrieve")
     def retrieve(request: RetrievalRequest, http_request: Request):

@@ -1,0 +1,71 @@
+{
+  "models": [
+    {
+      "id": "urn:example:model:modflow6",
+      "label": "MODFLOW 6 teaching record",
+      "origin": "synthetic_fixture",
+      "catalog_verified": false,
+      "method": "finite-difference groundwater flow with CSUB compaction",
+      "requires": [
+        "urn:example:variable:groundwater-head",
+        "urn:example:variable:hydraulic-conductivity",
+        "urn:example:variable:pumping-rate"
+      ],
+      "limitations": [
+        "No runnable model or calibrated parameters provided"
+      ]
+    },
+    {
+      "id": "urn:example:model:modflow2005",
+      "label": "MODFLOW 2005 teaching record",
+      "origin": "synthetic_fixture",
+      "catalog_verified": false,
+      "method": "finite-difference groundwater flow with SUB compaction",
+      "requires": [
+        "urn:example:variable:groundwater-head",
+        "urn:example:variable:hydraulic-conductivity",
+        "urn:example:variable:pumping-rate"
+      ],
+      "limitations": [
+        "No runnable model or calibrated parameters provided"
+      ]
+    }
+  ],
+  "variables": [
+    {
+      "id": "urn:example:variable:groundwater-head",
+      "label": "groundwater head",
+      "unit": "m",
+      "svo_uri": null,
+      "alignment_status": "requires_expert_mapping"
+    },
+    {
+      "id": "urn:example:variable:land-subsidence",
+      "label": "land surface subsidence",
+      "unit": "m",
+      "svo_uri": null,
+      "alignment_status": "requires_expert_mapping"
+    },
+    {
+      "id": "urn:example:variable:hydraulic-conductivity",
+      "label": "aquifer hydraulic conductivity",
+      "unit": "m/d",
+      "svo_uri": null,
+      "alignment_status": "requires_expert_mapping"
+    },
+    {
+      "id": "urn:example:variable:pumping-rate",
+      "label": "well pumping volume flow rate",
+      "unit": "m3/d",
+      "svo_uri": null,
+      "alignment_status": "requires_expert_mapping"
+    },
+    {
+      "id": "urn:example:variable:drawdown",
+      "label": "groundwater drawdown",
+      "unit": "m",
+      "svo_uri": null,
+      "alignment_status": "requires_expert_mapping"
+    }
+  ]
+}

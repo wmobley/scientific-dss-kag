@@ -1,0 +1,162 @@
+[
+ {
+  "id": "https://w3id.org/okn/i/mint/AIR__TEMPERATURE",
+  "type": [
+   "StandardVariable"
+  ],
+  "label": [
+   "air__temperature"
+  ],
+  "description": [
+   "                    air__temperature\n                        \nThis variable has the recorded  phenomenon air\nThis variable has the recorded units O.\nThis variable has the recorded property temperature                                                "
+  ],
+  "sameAs": [
+   [
+    "http://www.geoscienceontology.org/svo/svl/variable#air__temperature"
+   ]
+  ]
+ },
+ {
+  "id": "https://w3id.org/okn/i/mint/LAND_SURFACE_AIR__TEMPERATURE",
+  "type": [
+   "StandardVariable"
+  ],
+  "label": [
+   "land_surface_air__temperature"
+  ],
+  "description": [
+   "                    land_surface_air__temperature\n                        \nThis variable has the recorded  phenomenon:air(land_surface)@context~above_air\nThis variable has the recorded  matter air\nThis variable has the recorded context phenomenon land_surface\nThis variable has the recorded context body land\nThis variable has the recorded context abstraction surface\nThis variable has the recorded units O.\nThis variable has the recorded property temperature                                                "
+  ],
+  "sameAs": [
+   [
+    "http://www.geoscienceontology.org/svo/svl/variable#%28land_surface%29%40context%7Eabove_air__temperature"
+   ]
+  ]
+ },
+ {
+  "id": "https://w3id.org/okn/i/mint/ATMOSPHERE_WATER__TIME_INTEGRAL_OF_PRECIPITATION_LEQ_VOLUME_FLUX",
+  "type": [
+   "StandardVariable"
+  ],
+  "label": [
+   "atmosphere_water__time_integral_of_precipitation_leq_volume_flux"
+  ],
+  "description": [
+   "                    atmosphere_water__time_integral_of_precipitation_leq_volume_flux\n                        \nThis variable contains the  attribute leq                                                \n                        \nThis variable has the recorded  phenomenon atmosphere@role~source_water@role~main_precipitation\nThis variable has the recorded  process precipitation\nThis variable has the recorded participant phenomenon:atmospherewater\nThis variable has the recorded units L.\nThis variable has the recorded property time_integral_of_precipitation_leq_volume_flux\nThis variable has the recorded modified property precipitation_leq_volume_flux\nThis variable has the recorded applied operator time_integral                                                "
+  ],
+  "sameAs": [
+   [
+    "http://www.geoscienceontology.org/svo/svl/variable#atmosphere%40role%7Esource_water%40role%7Emain_precipitation__time_integral_of_precipitation_leq_volume_flux"
+   ]
+  ]
+ },
+ {
+  "id": "https://w3id.org/okn/i/mint/ATMOSPHERE_WATER__PRECIPITATION_LEQ_VOLUME_FLUX",
+  "type": [
+   "StandardVariable"
+  ],
+  "label": [
+   "atmosphere_water__precipitation_leq_volume_flux"
+  ],
+  "description": [
+   "                    atmosphere_water__leq_precipitation_volume_flux\n                        \nAlternative labels for this instance are atmosphere_water__precipitation_leq_volume_flux.                                                \n                        \nThis variable contains the  attribute leq                                                \n                        \nThis variable has the recorded  phenomenon atmosphere@role~source_water@role~main_precipitation\nThis variable has the recorded  process precipitation\nThis variable has the recorded participant phenomenon:atmospherewater\nThis variable has the recorded units L T^-1.\nThis variable has the recorded property precipitation_leq_volume_flux                                                "
+  ],
+  "sameAs": [
+   [
+    "http://www.geoscienceontology.org/svo/svl/variable#atmosphere%40role%7Esource_water%40role%7Emain_precipitation__precipitation_leq_volume_flux"
+   ]
+  ]
+ },
+ {
+  "id": "https://w3id.org/okn/i/mint/wmobley-standard-variable-atmosphere-water-precipitation-rate",
+  "type": [
+   "StandardVariable"
+  ],
+  "label": [
+   "atmosphere_water__precipitation_rate"
+  ],
+  "description": [
+   "Precipitation forcing applied to the catchment model."
+  ]
+ },
+ {
+  "id": "https://w3id.org/okn/i/mint/GROUNDWATER__HEAD",
+  "type": [
+   "StandardVariable"
+  ],
+  "label": [
+   "groundwater__head"
+  ],
+  "description": [
+   "                    groundwater__head\n                        \nThis variable has the recorded  phenomenon:water(land_surface)@context~below_(ground@context~in_water)ground@context~in_water\nThis variable has the recorded  matter water\nThis variable has the recorded context phenomenon:groundland_surface\nThis variable has the recorded context body land\nThis variable has the recorded context abstraction surface\nThis variable has the recorded units L.\nThis variable has the recorded property head                                                "
+  ],
+  "sameAs": [
+   [
+    "http://www.geoscienceontology.org/svo/svl/variable#%28land_surface%29%40context%7Ebelow_%28ground%40context%7Ein_water%29__head"
+   ]
+  ]
+ },
+ {
+  "id": "https://w3id.org/okn/i/mint/land_surface__subsidence",
+  "type": [
+   "StandardVariable"
+  ],
+  "label": [
+   "land_surface__subsidence"
+  ],
+  "description": [
+   "Vertical subsidence (downward displacement) of the land surface."
+  ],
+  "sameAs": [
+   [
+    "http://www.geoscienceontology.org/svo/svl/variable#land_surface__subsidence"
+   ]
+  ]
+ },
+ {
+  "id": "https://w3id.org/okn/i/mint/aquifer__hydraulic_conductivity",
+  "type": [
+   "StandardVariable"
+  ],
+  "label": [
+   "aquifer__hydraulic_conductivity"
+  ],
+  "description": [
+   "Saturated hydraulic conductivity of the aquifer porous medium."
+  ],
+  "sameAs": [
+   [
+    "http://www.geoscienceontology.org/svo/svl/variable#aquifer__hydraulic_conductivity"
+   ]
+  ]
+ },
+ {
+  "id": "https://w3id.org/okn/i/mint/groundwater_well__pumping_volume_flow_rate",
+  "type": [
+   "StandardVariable"
+  ],
+  "label": [
+   "groundwater_well__pumping_volume_flow_rate"
+  ],
+  "description": [
+   "Volumetric pumping (withdrawal/injection) rate at a groundwater well."
+  ],
+  "sameAs": [
+   [
+    "http://www.geoscienceontology.org/svo/svl/variable#groundwater_well__pumping_volume_flow_rate"
+   ]
+  ]
+ },
+ {
+  "id": "https://w3id.org/okn/i/mint/wmobley-standard-variable-groundwater-drawdown",
+  "type": [
+   "StandardVariable"
+  ],
+  "label": [
+   "groundwater__drawdown"
+  ],
+  "description": [
+   "Simulated drawdown relative to initial or reference hydraulic head."
+  ]
+ }
+]

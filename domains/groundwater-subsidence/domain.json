@@ -1,0 +1,5 @@
+{
+  "name": "groundwater-subsidence",
+  "title": "Groundwater pumping and land subsidence modeling",
+  "benchmark": "groundwater-subsidence-smoke"
+}

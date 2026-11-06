@@ -4,7 +4,7 @@ import math
 import re
 from collections import Counter
 from .models import Backend, Evidence, Mode, RetrievalRequest
-from .resources import read_json
+from .domain import DEFAULT_DOMAIN, domain_name, load
 
 CONCEPTS = frozenset("DecisionProblem Stakeholder Objective Alternative Uncertainty InformationNeed ScientificMethod ComputationalModel Dataset Evidence ScientificClaim ScientificVariable Assumption ValidationActivity DecisionPathway".split())
 
@@ -44,8 +44,9 @@ def validate_evidence(evidence, sources):
 
 
 class Retriever:
-    def __init__(self, corpus=None):
-        self.corpus = corpus or read_json("domains/vector-borne-disease/corpus.json")
+    def __init__(self, corpus=None, domain=DEFAULT_DOMAIN):
+        self.domain = domain_name(domain)
+        self.corpus = corpus or load(self.domain, "corpus.json")
         self.sources = {s["id"]: s for s in self.corpus["sources"]}
         if len(self.sources) != len(self.corpus["sources"]):
             raise ValueError("duplicate source IDs")

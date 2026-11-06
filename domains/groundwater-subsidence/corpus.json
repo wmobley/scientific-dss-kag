@@ -1,0 +1,123 @@
+{
+  "version": "0.1.0",
+  "synthetic": true,
+  "sources": [
+    {
+      "id": "gw-drawdown",
+      "title": "Drawdown, compaction and subsidence",
+      "text": "Groundwater withdrawals lower hydraulic head in an aquifer system. When head falls below the preconsolidation head, compressible interbeds can compact inelastically, and the resulting land surface subsidence is largely permanent. Head recovery after pumping stops may restore only the elastic part of the deformation.",
+      "uri": "urn:scientific-dss:synthetic:gw-drawdown",
+      "origin": "synthetic_teaching_note",
+      "license": "CC0-1.0"
+    },
+    {
+      "id": "gw-modflow",
+      "title": "Groundwater flow and subsidence modeling",
+      "text": "MODFLOW simulates groundwater flow on a finite-difference grid and needs aquifer hydraulic conductivity, storage properties, boundary conditions and stress periods that represent pumping. Calibration against observed hydraulic head is needed before results inform decisions. Simulating subsidence requires a package that represents interbed compaction, such as SUB in MODFLOW-2005 or CSUB in MODFLOW 6.",
+      "uri": "urn:scientific-dss:synthetic:gw-modflow",
+      "origin": "synthetic_teaching_note",
+      "license": "CC0-1.0"
+    },
+    {
+      "id": "gw-observations",
+      "title": "Observations for head and displacement",
+      "text": "Land surface displacement is measured with extensometers and satellite or GNSS methods, while hydraulic head is measured in monitoring wells. Observation locations, vertical datums and time periods must be reconciled before simulated and observed displacement are compared.",
+      "uri": "urn:scientific-dss:synthetic:gw-observations",
+      "origin": "synthetic_teaching_note",
+      "license": "CC0-1.0"
+    },
+    {
+      "id": "gw-decision",
+      "title": "Pumping management decision",
+      "text": "A groundwater management decision about pumping limits needs an objective, alternative pumping scenarios, and an account of uncertainty in aquifer properties and future demand. Simulated subsidence for a scenario is a conditional projection, not a forecast of what will occur.",
+      "uri": "urn:scientific-dss:synthetic:gw-decision",
+      "origin": "synthetic_teaching_note",
+      "license": "CC0-1.0"
+    },
+    {
+      "id": "gw-candidate",
+      "title": "Unreviewed extraction example",
+      "text": "A proposed literature extraction suggests that reducing pumping always reverses subsidence. This deliberately unsupported teaching assertion must remain a candidate.",
+      "uri": "urn:scientific-dss:synthetic:gw-candidate",
+      "origin": "synthetic_teaching_note",
+      "license": "CC0-1.0"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-gw-drawdown",
+      "source_id": "gw-drawdown",
+      "source_hash": "78d027ade591b9781a0d5ed7f752500c4839d85c11c3c42dedeb38e837abde69",
+      "passage": "Groundwater withdrawals lower hydraulic head in an aquifer system. When head falls below the preconsolidation head, compressible interbeds can compact inelastically, and the resulting land surface subsidence is largely permanent. Head recovery after pumping stops may restore only the elastic part of the deformation.",
+      "start": 0,
+      "end": 317,
+      "concepts": [
+        "ScientificVariable",
+        "Assumption",
+        "Uncertainty"
+      ],
+      "review_status": "reviewed",
+      "origin": "synthetic_teaching_note"
+    },
+    {
+      "id": "ev-gw-modflow",
+      "source_id": "gw-modflow",
+      "source_hash": "00de3c84050b03d103100e28a84bdf7145e4aa533d584e5038e768a4e2373e1d",
+      "passage": "MODFLOW simulates groundwater flow on a finite-difference grid and needs aquifer hydraulic conductivity, storage properties, boundary conditions and stress periods that represent pumping. Calibration against observed hydraulic head is needed before results inform decisions. Simulating subsidence requires a package that represents interbed compaction, such as SUB in MODFLOW-2005 or CSUB in MODFLOW 6.",
+      "start": 0,
+      "end": 402,
+      "concepts": [
+        "ScientificMethod",
+        "ComputationalModel",
+        "InformationNeed"
+      ],
+      "review_status": "reviewed",
+      "origin": "synthetic_teaching_note"
+    },
+    {
+      "id": "ev-gw-observations",
+      "source_id": "gw-observations",
+      "source_hash": "11e455fe1eec167174f26a84f1d4de8b4c75849efbe456c6f99298c447272ab2",
+      "passage": "Land surface displacement is measured with extensometers and satellite or GNSS methods, while hydraulic head is measured in monitoring wells. Observation locations, vertical datums and time periods must be reconciled before simulated and observed displacement are compared.",
+      "start": 0,
+      "end": 273,
+      "concepts": [
+        "Dataset",
+        "ValidationActivity",
+        "ScientificVariable"
+      ],
+      "review_status": "reviewed",
+      "origin": "synthetic_teaching_note"
+    },
+    {
+      "id": "ev-gw-decision",
+      "source_id": "gw-decision",
+      "source_hash": "9e33ae2b5123365b97f633a9603291cad9c31b7af2a7b698cebebbc5acb24a2c",
+      "passage": "A groundwater management decision about pumping limits needs an objective, alternative pumping scenarios, and an account of uncertainty in aquifer properties and future demand. Simulated subsidence for a scenario is a conditional projection, not a forecast of what will occur.",
+      "start": 0,
+      "end": 276,
+      "concepts": [
+        "DecisionProblem",
+        "Objective",
+        "Alternative",
+        "Uncertainty"
+      ],
+      "review_status": "reviewed",
+      "origin": "synthetic_teaching_note"
+    },
+    {
+      "id": "ev-gw-candidate",
+      "source_id": "gw-candidate",
+      "source_hash": "220080dd330e3c760222d03d728d1d9899c9f86aeb04b6776e006517b507a539",
+      "passage": "A proposed literature extraction suggests that reducing pumping always reverses subsidence. This deliberately unsupported teaching assertion must remain a candidate.",
+      "start": 0,
+      "end": 165,
+      "concepts": [
+        "ScientificClaim",
+        "Evidence"
+      ],
+      "review_status": "candidate",
+      "origin": "synthetic_teaching_note"
+    }
+  ]
+}
