@@ -7,10 +7,17 @@ from .retrieval import Retriever
 
 def main():
     parser = argparse.ArgumentParser(description="Run reproducible synthetic retrieval benchmarks and LLM tooling")
-    parser.add_argument("command", choices=["benchmark", "openai-smoke", "gateway", "policy-check", "catalog-verify", "vector-migrate", "vector-index", "vector-status", "compare-backends"])
+    parser.add_argument("command", choices=["benchmark", "openai-smoke", "gateway", "policy-check", "catalog-verify", "vector-migrate", "vector-index", "vector-status", "compare-backends", "crosswalk-review"])
     parser.add_argument("--k", type=int, choices=range(1,21), default=3)
     parser.add_argument("--port", type=int, default=8092, help="gateway port (always binds 127.0.0.1)")
     parser.add_argument("--domain", default=None, help="domain under domains/ (default: DSS_DOMAIN or vector-borne-disease)")
+    review = parser.add_argument_group("crosswalk-review (records a person's decision; run from the repository root)")
+    review.add_argument("--list", action="store_true", help="show every crosswalk entry and its review state")
+    review.add_argument("--fixture-id")
+    review.add_argument("--status", choices=["accepted", "rejected", "unreviewed"])
+    review.add_argument("--reviewer", help="the reviewer's name")
+    review.add_argument("--catalog-id", help="the accepted candidate's catalog_id (needed when an entry has several candidates)")
+    review.add_argument("--date", help="YYYY-MM-DD (default: today, UTC)")
     parser.add_argument("--root", default=".", help="repository root for policy-check")
     args = parser.parse_args()
     if args.command == "benchmark":
@@ -77,6 +84,31 @@ def main():
             if exc.__class__.__module__.startswith("psycopg") or exc.__class__.__name__ == "StaleIndex":
                 parser.exit(1, f"vector store error: {exc.__class__.__name__}: {str(exc).splitlines()[0][:160] if exc.__class__.__name__ == 'StaleIndex' else 'is it running and migrated? (docs/setup.md)'}\n")
             raise
+    elif args.command == "crosswalk-review":
+        import datetime
+        from pathlib import Path
+        from .crosswalk import apply_review
+        try:
+            domain = domain_name(args.domain)
+        except ValueError as exc:
+            parser.exit(1, f"{exc}\n")
+        path = Path("domains") / domain / "crosswalk.json"
+        if not path.is_file():
+            parser.exit(1, f"{path} not found; run this from the repository root\n")
+        crosswalk = json.loads(path.read_text())
+        if args.list or not args.status:
+            for entry in crosswalk["entries"]:
+                print(f"{entry['review']['status']:11s} {entry['kind']:8s} {entry['fixture_id']}  <- " + " | ".join(
+                    f"{c['label']} ({'SVO' if c['svo_uri'] else 'no SVO'}, {c['confidence']})" for c in entry["candidates"]))
+            raise SystemExit(0)
+        if not args.fixture_id:
+            parser.exit(1, "--fixture-id is required with --status\n")
+        try:
+            updated = apply_review(crosswalk, args.fixture_id, args.status, args.reviewer, args.date or datetime.datetime.now(datetime.timezone.utc).date().isoformat(), args.catalog_id)
+        except ValueError as exc:
+            parser.exit(1, f"{exc}\n")
+        path.write_text(json.dumps(updated, indent=1, ensure_ascii=False) + "\n")
+        print(f"Recorded {args.status} for {args.fixture_id} in {path}. Re-check with: scientific-dss catalog-verify --domain {domain}")
     elif args.command == "gateway":
         import uvicorn
         from .gateway import create_gateway_app

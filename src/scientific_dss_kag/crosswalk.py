@@ -3,6 +3,8 @@
 Entries are machine-assisted *candidates*. A fixture record counts as aligned only after a human
 sets review.status to "accepted" (with reviewer, date and the accepted catalog ID).
 """
+import re
+
 REVIEW_STATES = {"unreviewed", "accepted", "rejected"}
 KINDS = {"variable": "standardvariables", "model": "models"}
 
@@ -68,3 +70,33 @@ def aligned(crosswalk):
         chosen = next(c for c in entry["candidates"] if c["catalog_id"] == review["accepted_catalog_id"])
         out[entry["fixture_id"]] = {"catalog_id": chosen["catalog_id"], "svo_uri": chosen.get("svo_uri")}
     return out
+
+
+def apply_review(crosswalk, fixture_id, status, reviewer=None, date=None, catalog_id=None, kind=None):
+    """Return a copy of the crosswalk with one entry's review recorded. Used by the `crosswalk-review` command, which
+    records a decision a person makes; nothing here decides anything. Accepting needs a reviewer, a date and one of
+    the entry's own candidate IDs; unreviewing clears the decision."""
+    import copy
+    if status not in REVIEW_STATES:
+        raise ValueError("status must be one of: " + ", ".join(sorted(REVIEW_STATES)))
+    updated = copy.deepcopy(crosswalk)
+    matches = [e for e in updated["entries"] if e["fixture_id"] == fixture_id and (kind is None or e["kind"] == kind)]
+    if len(matches) != 1:
+        raise ValueError(f"expected exactly one crosswalk entry for {fixture_id!r}, found {len(matches)}")
+    entry = matches[0]
+    if status == "accepted":
+        if not reviewer or not reviewer.strip():
+            raise ValueError("accepting needs a reviewer name")
+        if not date or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date):
+            raise ValueError("accepting needs a date as YYYY-MM-DD")
+        candidates = [c["catalog_id"] for c in entry["candidates"]]
+        if catalog_id is None and len(candidates) == 1:
+            catalog_id = candidates[0]
+        if catalog_id not in candidates:
+            raise ValueError("accepting needs one of this entry's candidate catalog IDs: " + ", ".join(candidates))
+        entry["review"] = {"status": "accepted", "reviewer": reviewer.strip(), "date": date, "accepted_catalog_id": catalog_id}
+    elif status == "rejected":
+        entry["review"] = {"status": "rejected", "reviewer": (reviewer or "").strip() or None, "date": date, "accepted_catalog_id": None}
+    else:
+        entry["review"] = {"status": "unreviewed", "reviewer": None, "date": None, "accepted_catalog_id": None}
+    return updated
