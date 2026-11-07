@@ -1,12 +1,15 @@
 # Local OpenSPG v0.8 stack for verifying KAG. Localhost-only, pinned, no LLM settings inside.
 # Start:  python scripts/init_openspg_env.py && docker compose -f compose.openspg.yaml --env-file .env.openspg up -d --build
-# Needs: git checkout of OpenSPG/openspg at tag v0.8 in work/openspg/src (see docs/setup.md).
+# Needs: OpenSPG/openspg at tag v0.8 in work/openspg/src and OpenSPG/KAG at tag v0.8.0 in work/kag/KAG.
 name: scientific-dss-openspg
 services:
   server:
     build:
       context: work/openspg/src
       dockerfile: ../../../openspg/Dockerfile.server
+      additional_contexts:
+        kag: work/kag/KAG
+        extras: openspg
     container_name: release-openspg-server
     ports:
       - "127.0.0.1:8887:8887"
@@ -18,11 +21,16 @@ services:
     environment:
       JAVA_TOOL_OPTIONS: "-Xms512m -Xmx3g"
       TZ: UTC
+      # The server's in-process KAG Python finds the server itself through this, not a config file.
+      KAG_PROJECT_HOST_ADDR: "http://127.0.0.1:8887"
     command:
       - --server.repository.impl.jdbc.host=mysql
       - --server.repository.impl.jdbc.password=${OPENSPG_MYSQL_PASSWORD:?run scripts/init_openspg_env.py}
       - --jasypt.encryptor.password=${OPENSPG_JASYPT_PASSWORD:?}
       - --builder.model.execute.num=2
+      - --python.exec=/opt/kag-venv/bin/python
+      # pemja splits this on ';'. The server imports the top-level module `bridge`, which lives inside the kag package.
+      - "--python.paths=/opt/kag-venv/lib/python3.10/site-packages/;/opt/kag-venv/lib/python3.10/site-packages/kag"
       - --cloudext.graphstore.url=neo4j://release-openspg-neo4j:7687?user=neo4j&password=${OPENSPG_NEO4J_PASSWORD:?}&database=neo4j
       - --cloudext.searchengine.url=neo4j://release-openspg-neo4j:7687?user=neo4j&password=${OPENSPG_NEO4J_PASSWORD:?}&database=neo4j
     mem_limit: 3500m
@@ -52,8 +60,9 @@ services:
     security_opt: [no-new-privileges:true]
 
   neo4j:
-    # Official image; the server uses the Neo4j 4.4.7 driver and APOC procedures.
-    image: neo4j:4.4@sha256:bb4a6efb3fc5349dbfe2b2601e48c4056c1ff4c4ecbcd36c12f5bd0a346a596b
+    # Official 5.26 LTS image. The server creates vector indexes with `CREATE VECTOR INDEX`, which
+    # Neo4j 4.4 lacks (5.13+ only). The server's 4.4.7 Java driver still speaks Bolt to 5.x.
+    image: neo4j:5.26@sha256:42ef3ebfd671ebd01fdebb6dcbe80cf7b45eef2aa3d346ef4132f7ef31e67d2f
     container_name: release-openspg-neo4j
     ports:
       - "127.0.0.1:7474:7474"
@@ -61,9 +70,9 @@ services:
     environment:
       NEO4J_AUTH: neo4j/${OPENSPG_NEO4J_PASSWORD:?}
       NEO4J_PLUGINS: '["apoc"]'
-      NEO4J_dbms_memory_heap_initial__size: 512m
-      NEO4J_dbms_memory_heap_max__size: 1500m
-      NEO4J_dbms_memory_pagecache_size: 512m
+      NEO4J_server_memory_heap_initial__size: 512m
+      NEO4J_server_memory_heap_max__size: 1500m
+      NEO4J_server_memory_pagecache_size: 512m
       NEO4J_dbms_security_procedures_unrestricted: "apoc.*"
       NEO4J_dbms_security_procedures_allowlist: "apoc.*"
       NEO4J_apoc_export_file_enabled: "true"

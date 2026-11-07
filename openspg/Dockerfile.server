@@ -1,5 +1,6 @@
 # OpenSPG server built from the tagged GitHub source (work/openspg/src, tag v0.8), not from a
-# third-party registry. Build context is that checkout; see compose.openspg.yaml.
+# third-party registry. Build context is that checkout; see compose.openspg.yaml, which also supplies
+# the named contexts `kag` (pinned KAG v0.8.0 checkout) and `extras` (this directory).
 # Base images are the official Docker Hub images, pinned by digest.
 FROM maven:3.9-eclipse-temurin-8@sha256:0f402712b7a469189cfea5ec69cdcadcb32b22aaf1ea62777ab925c3d8470175 AS build
 WORKDIR /src
@@ -12,11 +13,23 @@ RUN --mount=type=cache,target=/root/.m2 \
         package -pl server/arks/sofaboot -am \
     && cp dev/release/server/target/arks-sofaboot-0.0.1-SNAPSHOT-executable.jar /server.jar
 
-FROM eclipse-temurin:8-jre-jammy@sha256:48a8129eda9d0c8a81c86d1837c125b63a5ee8558ba9565b6066516ae72a8d47
+# Runtime. The server runs KAG's Python in-process through pemja (a Java-Python bridge) for project
+# and scheduler tasks, so the image needs Python 3.10, pemja and KAG. A JDK (not a JRE) is needed
+# to compile pemja's native extension. Upstream's own release image bundles the same pieces.
+FROM eclipse-temurin:8-jdk-jammy@sha256:2612c7d29811c3271e0a3c24a05799b242219a37c4b2d5db9c28db5a19350520
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y python3.10 python3.10-dev python3.10-venv gcc libc6-dev git \
+    && rm -rf /var/lib/apt/lists/*
+RUN python3.10 -m venv /opt/kag-venv
+COPY --from=kag . /kag-src
+COPY --from=extras kag-constraints.txt /tmp/kag-constraints.txt
+# pemja 0.4.0 is the version upstream's release image pairs with the server.
+RUN /opt/kag-venv/bin/pip install --no-cache-dir -c /tmp/kag-constraints.txt pemja==0.4.0 /kag-src \
+    && rm -rf /kag-src /tmp/kag-constraints.txt
 RUN useradd --system --create-home --uid 10001 openspg
 COPY --from=build /server.jar /app/server.jar
-# The server writes ./logs under its working directory, so that directory must belong to the non-root user.
-RUN mkdir -p /app/logs && chown -R openspg:openspg /app/logs
+# The server writes ./logs (and KAG may write scratch files) under its working directory.
+RUN mkdir -p /app/logs && chown -R openspg:openspg /app
 WORKDIR /app
 USER openspg
 EXPOSE 8887

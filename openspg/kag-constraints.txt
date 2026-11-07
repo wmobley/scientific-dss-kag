@@ -1,0 +1,3 @@
+# Shared pins for the KAG Python environment (host venv and the OpenSPG server image).
+# KAG v0.8.0 leaves pydantic unpinned, and mcp==1.6.0 breaks on pydantic >= 2.14.
+pydantic==2.11.7

@@ -58,3 +58,38 @@ def test_allows_configured_endpoints_and_warns_on_langsmith_without_leaking_valu
     result = check_policy(root)
     assert result["ok"] and any("LANGSMITH" in w for w in result["warnings"])
     assert "super-secret-value" not in str(result)
+
+
+GOOD_COMPOSE = """
+services:
+  server:
+    build: {context: work/openspg/src}
+    ports: ["127.0.0.1:8887:8887"]
+  db:
+    image: mariadb:10.5@sha256:%s
+    ports: ["127.0.0.1:3306:3306"]
+""" % ("a" * 64)
+
+
+def test_openspg_compose_and_kag_config_rules(tmp_path):
+    assert check_policy(tree(tmp_path / "ok", {"compose.openspg.yaml": GOOD_COMPOSE}))["ok"]
+    bad = tree(tmp_path / "bad", {"compose.openspg.yaml": """
+services:
+  db: {image: "mariadb:latest", ports: ["3306:3306"]}
+  server: {image: "x@sha256:%s", environment: {OPENAI_API_KEY: abc}, ports: ["127.0.0.1:1:1"]}
+""" % ("b" * 64)})
+    violations = check_policy(bad)["violations"]
+    assert any("not pinned" in v for v in violations) and any("not bound to 127.0.0.1" in v for v in violations)
+    assert any("LLM settings" in v for v in violations)
+
+
+def test_rendered_kag_config_must_use_the_gateway_and_not_hold_the_upstream_key(tmp_path):
+    good = tree(tmp_path / "good", {".env": "OPENAI_API_KEY=real-upstream-key-value\n",
+                                    "work/kag/kag_config.yaml": "chat_llm: {base_url: 'http://127.0.0.1:8092/v1', api_key: token}\n"})
+    assert check_policy(good)["ok"]
+    foreign = tree(tmp_path / "foreign", {"work/kag/kag_config.yaml": "chat_llm: {base_url: 'https://dashscope.example/v1'}\nx: {base_url: 'http://127.0.0.1:1/v1'}\n"})
+    assert any("not the local gateway" in v for v in check_policy(foreign)["violations"])
+    leaked = tree(tmp_path / "leaked", {".env": "OPENAI_API_KEY=real-upstream-key-value\n",
+                                        "work/kag/kag_config.yaml": "chat_llm: {base_url: 'http://127.0.0.1:8092/v1', api_key: real-upstream-key-value}\n"})
+    result = check_policy(leaked)
+    assert any("upstream API key" in v for v in result["violations"]) and "real-upstream-key-value" not in str(result)

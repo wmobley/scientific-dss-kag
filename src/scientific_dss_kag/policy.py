@@ -3,6 +3,8 @@ one audited path against one allowlisted endpoint. Reports hosts and names, neve
 from pathlib import Path
 import re
 from urllib.parse import urlsplit
+import yaml
+from .kag_config import find_base_urls
 from .settings import ALLOWED_LLM_HOSTS, LOOPBACK_HOSTS
 
 FORBIDDEN_IMPORTS = ("anthropic", "google.generativeai", "google.genai", "cohere", "mistralai", "ollama",
@@ -76,10 +78,48 @@ def check_config(root, violations, warnings):
                 warnings.append(f"{name}: LANGSMITH_TRACING=true would send prompts to a second third party")
 
 
+def _env_value(root, name):
+    path = root / ".env"
+    if path.is_file():
+        for line in path.read_text().splitlines():
+            key, _, value = line.partition("=")
+            if key.strip() == name:
+                return value.strip().strip("'\"")
+    return ""
+
+
+def check_openspg(root, violations):
+    """The OpenSPG compose file and rendered KAG config must keep all LLM traffic on the gateway."""
+    compose = root / "compose.openspg.yaml"
+    if compose.is_file():
+        services = (yaml.safe_load(compose.read_text()) or {}).get("services", {})
+        for name, service in services.items():
+            where = f"compose.openspg.yaml: service '{name}'"
+            if "build" not in service and "@sha256:" not in service.get("image", ""):
+                violations.append(f"{where}: image is not pinned by digest")
+            for port in service.get("ports", []):
+                if not str(port).startswith("127.0.0.1:"):
+                    violations.append(f"{where}: port {port} is not bound to 127.0.0.1")
+            env = service.get("environment", {})
+            names = list(env) if isinstance(env, dict) else [e.split("=", 1)[0] for e in env]
+            if any(n.startswith("OPENAI_") or n.endswith("_API_KEY") or n.startswith("DSS_GATEWAY") for n in names):
+                violations.append(f"{where}: containers must not receive LLM settings or keys")
+    config = root / "work" / "kag" / "kag_config.yaml"
+    if config.is_file():
+        text = config.read_text()
+        for url in set(find_base_urls(yaml.safe_load(text))):
+            if urlsplit(str(url)).hostname not in LOOPBACK_HOSTS:
+                violations.append(f"work/kag/kag_config.yaml: base_url host '{urlsplit(str(url)).hostname}' is not the local gateway")
+        upstream_key = _env_value(root, "OPENAI_API_KEY")
+        if upstream_key and upstream_key in text:
+            violations.append("work/kag/kag_config.yaml: contains the upstream API key; KAG must only hold the gateway token")
+
+
 def check_policy(root="."):
     root = Path(root)
     violations, warnings = [], []
     check_source(root, violations)
     check_config(root, violations, warnings)
+    check_openspg(root, violations)
     return {"policy": "openai-compatible-single-endpoint", "ok": not violations,
             "violations": violations, "warnings": warnings, "allowed_hosts": sorted(ALLOWED_LLM_HOSTS)}
