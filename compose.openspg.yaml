@@ -1,0 +1,85 @@
+# Local OpenSPG v0.8 stack for verifying KAG. Localhost-only, pinned, no LLM settings inside.
+# Start:  python scripts/init_openspg_env.py && docker compose -f compose.openspg.yaml --env-file .env.openspg up -d --build
+# Needs: git checkout of OpenSPG/openspg at tag v0.8 in work/openspg/src (see docs/setup.md).
+name: scientific-dss-openspg
+services:
+  server:
+    build:
+      context: work/openspg/src
+      dockerfile: ../../../openspg/Dockerfile.server
+    container_name: release-openspg-server
+    ports:
+      - "127.0.0.1:8887:8887"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xms512m -Xmx3g"
+      TZ: UTC
+    command:
+      - --server.repository.impl.jdbc.host=mysql
+      - --server.repository.impl.jdbc.password=${OPENSPG_MYSQL_PASSWORD:?run scripts/init_openspg_env.py}
+      - --jasypt.encryptor.password=${OPENSPG_JASYPT_PASSWORD:?}
+      - --builder.model.execute.num=2
+      - --cloudext.graphstore.url=neo4j://release-openspg-neo4j:7687?user=neo4j&password=${OPENSPG_NEO4J_PASSWORD:?}&database=neo4j
+      - --cloudext.searchengine.url=neo4j://release-openspg-neo4j:7687?user=neo4j&password=${OPENSPG_NEO4J_PASSWORD:?}&database=neo4j
+    mem_limit: 3500m
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+
+  mysql:
+    # Upstream's "openspg-mysql" is the official mariadb image plus the repo's init SQL.
+    image: mariadb:10.5@sha256:a530aeeefd82f4fa5150f391b6c75462140904780338766f6b03acecb1cca3ce
+    container_name: release-openspg-mysql
+    environment:
+      MARIADB_ROOT_PASSWORD: ${OPENSPG_MYSQL_PASSWORD:?}
+      MARIADB_DATABASE: openspg
+      TZ: UTC
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_general_ci"]
+    volumes:
+      - ./work/openspg/src/dev/release/mysql/sql:/docker-entrypoint-initdb.d:ro
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MARIADB_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    mem_limit: 768m
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+
+  neo4j:
+    # Official image; the server uses the Neo4j 4.4.7 driver and APOC procedures.
+    image: neo4j:4.4@sha256:bb4a6efb3fc5349dbfe2b2601e48c4056c1ff4c4ecbcd36c12f5bd0a346a596b
+    container_name: release-openspg-neo4j
+    ports:
+      - "127.0.0.1:7474:7474"
+      - "127.0.0.1:7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/${OPENSPG_NEO4J_PASSWORD:?}
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_memory_heap_initial__size: 512m
+      NEO4J_dbms_memory_heap_max__size: 1500m
+      NEO4J_dbms_memory_pagecache_size: 512m
+      NEO4J_dbms_security_procedures_unrestricted: "apoc.*"
+      NEO4J_dbms_security_procedures_allowlist: "apoc.*"
+      NEO4J_apoc_export_file_enabled: "true"
+      NEO4J_apoc_import_file_enabled: "true"
+      TZ: UTC
+    volumes:
+      - neo4j-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p \"$${NEO4J_AUTH#neo4j/}\" 'RETURN 1' >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+    mem_limit: 2800m
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+
+volumes:
+  mysql-data:
+  neo4j-data:

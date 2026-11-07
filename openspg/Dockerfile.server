@@ -1,0 +1,23 @@
+# OpenSPG server built from the tagged GitHub source (work/openspg/src, tag v0.8), not from a
+# third-party registry. Build context is that checkout; see compose.openspg.yaml.
+# Base images are the official Docker Hub images, pinned by digest.
+FROM maven:3.9-eclipse-temurin-8@sha256:0f402712b7a469189cfea5ec69cdcadcb32b22aaf1ea62777ab925c3d8470175 AS build
+WORKDIR /src
+COPY . .
+ENV MAVEN_OPTS="-Xmx2g"
+# The cache mount keeps downloaded dependencies between attempts; the retry flags ride out the
+# occasional timeout from third-party repositories (the project also uses repo.osgeo.org).
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -B -q -DskipTests -Daether.connector.http.retryHandler.count=5 -Dmaven.wagon.http.retryHandler.count=5 \
+        package -pl server/arks/sofaboot -am \
+    && cp dev/release/server/target/arks-sofaboot-0.0.1-SNAPSHOT-executable.jar /server.jar
+
+FROM eclipse-temurin:8-jre-jammy@sha256:48a8129eda9d0c8a81c86d1837c125b63a5ee8558ba9565b6066516ae72a8d47
+RUN useradd --system --create-home --uid 10001 openspg
+COPY --from=build /server.jar /app/server.jar
+# The server writes ./logs under its working directory, so that directory must belong to the non-root user.
+RUN mkdir -p /app/logs && chown -R openspg:openspg /app/logs
+WORKDIR /app
+USER openspg
+EXPOSE 8887
+ENTRYPOINT ["java", "-Dfile.encoding=UTF-8", "-jar", "/app/server.jar"]
