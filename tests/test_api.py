@@ -30,15 +30,23 @@ def test_invalid_inputs(client,payload):
     assert client.post('/retrieve',json=payload).status_code == 422
 
 
-def test_kag_unavailable_and_catalog_honesty(client):
-    response = client.post('/retrieve',json={'query':'x','mode':'kag'})
-    assert response.status_code == 503
-    assert response.json()['detail']['code'] == 'integration_unavailable'
-    status = client.get('/integrations').json()
-    assert [status[k]['live_verified'] for k in ('kag', 'svo', 'pgvector')] == [False, False, False]
-    assert status['catalog']['live_verified'] is True and 'production host' in status['catalog']['scope']
-    assert 'unreviewed' in status['svo']['state']
-    assert client.get('/catalog/models').json()['origin'] == 'synthetic_fixture'
+def test_kag_unavailable_and_catalog_honesty():
+    from pathlib import Path
+    from scientific_dss_kag.kag_adapter import KagAdapter, KagSettings
+    absent = KagAdapter(KagSettings(project_dir=Path('/nonexistent/kag-project'), python=Path('/nonexistent/python'), script=Path('/nonexistent/q.py')))
+    with TestClient(create_app(settings=OpenAISettings(), domain='groundwater-subsidence', kag=absent), base_url='http://127.0.0.1') as client:
+        response = client.post('/retrieve',json={'query':'x','mode':'kag'})
+        assert response.status_code == 503
+        assert response.json()['detail']['code'] == 'kag_not_installed'
+    with TestClient(create_app(settings=OpenAISettings(), kag=absent)) as client:  # a non-localhost Host may not spend model calls
+        assert client.post('/retrieve',json={'query':'x','mode':'kag'}).status_code == 403
+    with TestClient(create_app(settings=OpenAISettings())) as client:
+        status = client.get('/integrations').json()
+        assert [status[k]['live_verified'] for k in ('svo', 'pgvector')] == [False, False]
+        assert status['kag']['live_verified'] is True and 'Per-sentence attribution' in status['kag']['scope']
+        assert status['catalog']['live_verified'] is True and 'production host' in status['catalog']['scope']
+        assert 'unreviewed' in status['svo']['state']
+        assert client.get('/catalog/models').json()['origin'] == 'synthetic_fixture'
 
 
 def test_pathway_gaps_and_candidate(client):

@@ -50,3 +50,9 @@ Findings and limitations:
 - The final answer was written in Chinese for an English question although the English prompt was selected and the project language is `en`; the cause is unresolved.
 - The OpenSPG server makes model calls itself during project creation (config checks), so the gateway must be reachable from the container.
 - Not verified: the KAG adapter behind `/retrieve mode=kag` (still 503), failure paths (server down, malformed results, gateway cap reached), quality of the answer or the extracted graph, anything beyond one domain and one question.
+
+## M2 KAG adapter (2026-11-07)
+
+- 238 offline tests pass. The citation resolver is tested against the real trace recorded from KAG (fixtures/kag/groundwater-trace.json): four evidence IDs, duplicates merged by best score, text equal after normalisation (KAG's trace stores newlines as a literal backslash-n; the first version of the resolver missed that and the test against the recording caught it). Tampered text, candidate or invented evidence IDs, malformed references and missing lists are each rejected as a whole. Failure paths tested: OpenSPG server down, KAG failure (including the gateway cap or rate limit, which surfaces as a KAG exit error), malformed or unreadable output, wrong domain, busy, not installed, no secrets in the KAG process environment.
+- Live: `KagAdapter.retrieve` ran the real KAG solver for "What does a MODFLOW model need in order to simulate subsidence from pumping?" in 70 s and 47 gateway calls (129 of 200 used in total, no 429s). The MODFLOW evidence ranked first and results carried our hashes and spans. The answer text was again in Chinese for an English question.
+- Not verified live: the gateway cap being hit during a KAG run (covered by an offline test of the error path only), quality of answers and graph, other domains.

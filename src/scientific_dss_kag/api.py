@@ -9,6 +9,8 @@ from .connectors import fixture_catalog, integration_status
 from .domain import domain_name, load
 from .evaluation import evaluate
 from .models import Backend, EvaluationRequest, Pathway, RetrievalRequest
+from .kag_adapter import KagAdapter
+from .models import Mode
 from .openai_provider import OpenAIProvider, ProviderError
 from .settings import OpenAISettings
 from .retrieval import IntegrationUnavailable, Retriever
@@ -18,16 +20,16 @@ from .validation import validate_pathway
 def require_local_origin(request: Request):
     host = request.url.hostname
     if host not in {"127.0.0.1", "localhost", "::1"}:
-        raise HTTPException(403, "OpenAI operations require a trusted localhost Host.")
+        raise HTTPException(403, "Paid model operations require a trusted localhost Host.")
     origin = request.headers.get("origin")
     if origin and origin != f"{request.url.scheme}://{request.url.netloc}":
-        raise HTTPException(403, "OpenAI operations require the same origin.")
+        raise HTTPException(403, "Paid model operations require the same origin.")
     if request.headers.get("sec-fetch-site") in {"cross-site", "same-site"}:
-        raise HTTPException(403, "Cross-origin OpenAI operations are forbidden.")
+        raise HTTPException(403, "Cross-origin paid model operations are forbidden.")
     # CLI requests may omit Origin, but must still use localhost and typed JSON.
 
 
-def create_app(settings=None, provider=None, domain=None):
+def create_app(settings=None, provider=None, domain=None, kag=None):
     domain = domain_name(domain)
     provider = provider or OpenAIProvider(settings or OpenAISettings.from_env())
 
@@ -38,6 +40,7 @@ def create_app(settings=None, provider=None, domain=None):
 
     app = FastAPI(title="Scientific DSS KAG research testbed", version=__version__, docs_url=None, redoc_url=None, lifespan=lifespan)
     retriever = Retriever(domain=domain)
+    kag = kag or KagAdapter()
 
     @app.middleware("http")
     async def secure_headers(request, call_next):
@@ -109,6 +112,9 @@ def create_app(settings=None, provider=None, domain=None):
     @app.post("/retrieve")
     def retrieve(request: RetrievalRequest, http_request: Request):
         try:
+            if request.mode == Mode.kag:
+                require_local_origin(http_request)  # a KAG question spends many paid model calls
+                return kag.retrieve(request, retriever)
             if request.backend == Backend.openai:
                 require_local_origin(http_request)
                 with provider.operation():
@@ -117,7 +123,7 @@ def create_app(settings=None, provider=None, domain=None):
         except ProviderError as exc:
             raise HTTPException(exc.status, {"code": exc.code, "message": str(exc)}) from None
         except IntegrationUnavailable as exc:
-            raise HTTPException(503, {"code": "integration_unavailable", "message": str(exc)}) from exc
+            raise HTTPException(getattr(exc, "status", 503), {"code": getattr(exc, "code", "integration_unavailable"), "message": str(exc)}) from exc
         except ValueError as exc:
             raise HTTPException(422, str(exc)) from exc
 

@@ -15,7 +15,7 @@ FORBIDDEN_ENV_NAMES = ("ANTHROPIC_API_KEY", "GOOGLE_API_KEY", "GEMINI_API_KEY", 
                        "MISTRAL_API_KEY", "GROQ_API_KEY", "TOGETHER_API_KEY", "OPENROUTER_API_KEY")
 HTTP_CLIENT = re.compile(r"(\bhttpx\.(Async)?Client\b|\bhttpx\.(get|post|put|request|stream)\(|\brequests\.(get|post|put|request|Session)\(|^\s*(import|from)\s+(requests|aiohttp|urllib\.request|http\.client)\b)", re.MULTILINE)
 # Only these modules may open network connections: the LLM adapter, the LLM gateway, the (non-LLM) catalog.
-HTTP_ALLOWED_MODULES = {"openai_provider.py", "gateway.py", "connectors.py"}
+HTTP_ALLOWED_MODULES = {"openai_provider.py", "gateway.py", "connectors.py", "kag_adapter.py"}  # kag_adapter: loopback OpenSPG health check only
 CONFIG_FILES = (".env.example", "compose.yaml", "compose.vector.yaml", ".env")
 ENV_LINE = re.compile(r"^\s*(?:-\s*)?([A-Z][A-Z0-9_]*)\s*[=:]\s*(.*?)\s*$")
 

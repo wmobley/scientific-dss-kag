@@ -1,0 +1,55 @@
+{
+ "recorded": "2026-11-07, KAG v0.8.0 solver on the synthetic groundwater-subsidence corpus",
+ "query": "How can pumping and head decline cause permanent land subsidence?",
+ "answer": "抽取地下水时会把含水层中的水量移走，导致该区域的水压（即水头）下降，形成抽水降深（drawdown） <reference id=\"chunk:0_0\"></reference>。当水头下降到低于压实前的“预压实水头”时，原本可弹性变形的可压缩层（如黏土夹层）在增加的有效应力作用下发生不可逆的塑性压实。由于孔隙体积永久损失，地表随之产生不可恢复的下沉，即永久性地面沉降 <reference id=\"chunk:0_0\"></reference>。因此，抽水导致的水头下降若超过预压实阈值，就会引起不可恢复的层间压实，进而产生永久的地面沉降。",
+ "reference": [
+  {
+   "content": "\"Drawdown, compaction and subsidence\\nGroundwater withdrawals lower hydraulic head in an aquifer system.\\nWhen head falls below the preconsolidation head, compressible interbeds can compact inelastically, and the resulting land surface subsidence is largely permanent.\\nHead recovery after pumping stops may restore only the elastic part of the deformation.\"",
+   "title": "\"Drawdown, compaction and subsidence\"",
+   "chunk_id": "ev-gw-drawdown",
+   "score": "1.0"
+  },
+  {
+   "content": "\"Groundwater flow and subsidence modeling\\nMODFLOW simulates groundwater flow on a finite-difference grid and needs aquifer hydraulic conductivity, storage properties, boundary conditions and stress periods that represent pumping.\\nCalibration against observed hydraulic head is needed before results inform decisions.\\nSimulating subsidence requires a package that represents interbed compaction, such as SUB in MODFLOW-2005 or CSUB in MODFLOW 6.\"",
+   "title": "\"Groundwater flow and subsidence modeling\"",
+   "chunk_id": "ev-gw-modflow",
+   "score": "0.5"
+  },
+  {
+   "content": "\"Pumping management decision\\nA groundwater management decision about pumping limits needs an objective, alternative pumping scenarios, and an account of uncertainty in aquifer properties and future demand.\\nSimulated subsidence for a scenario is a conditional projection, not a forecast of what will occur.\"",
+   "title": "\"Pumping management decision\"",
+   "chunk_id": "ev-gw-decision",
+   "score": "0.3333333333333333"
+  },
+  {
+   "content": "\"Observations for head and displacement\\nLand surface displacement is measured with extensometers and satellite or GNSS methods, while hydraulic head is measured in monitoring wells.\\nObservation locations, vertical datums and time periods must be reconciled before simulated and observed displacement are compared.\"",
+   "title": "\"Observations for head and displacement\"",
+   "chunk_id": "ev-gw-observations",
+   "score": "0.25"
+  },
+  {
+   "content": "\"Drawdown, compaction and subsidence\\nGroundwater withdrawals lower hydraulic head in an aquifer system.\\nWhen head falls below the preconsolidation head, compressible interbeds can compact inelastically, and the resulting land surface subsidence is largely permanent.\\nHead recovery after pumping stops may restore only the elastic part of the deformation.\"",
+   "title": "\"Drawdown, compaction and subsidence\"",
+   "chunk_id": "ev-gw-drawdown",
+   "score": "1.0"
+  },
+  {
+   "content": "\"Pumping management decision\\nA groundwater management decision about pumping limits needs an objective, alternative pumping scenarios, and an account of uncertainty in aquifer properties and future demand.\\nSimulated subsidence for a scenario is a conditional projection, not a forecast of what will occur.\"",
+   "title": "\"Pumping management decision\"",
+   "chunk_id": "ev-gw-decision",
+   "score": "0.5"
+  },
+  {
+   "content": "\"Observations for head and displacement\\nLand surface displacement is measured with extensometers and satellite or GNSS methods, while hydraulic head is measured in monitoring wells.\\nObservation locations, vertical datums and time periods must be reconciled before simulated and observed displacement are compared.\"",
+   "title": "\"Observations for head and displacement\"",
+   "chunk_id": "ev-gw-observations",
+   "score": "0.3333333333333333"
+  },
+  {
+   "content": "\"Groundwater flow and subsidence modeling\\nMODFLOW simulates groundwater flow on a finite-difference grid and needs aquifer hydraulic conductivity, storage properties, boundary conditions and stress periods that represent pumping.\\nCalibration against observed hydraulic head is needed before results inform decisions.\\nSimulating subsidence requires a package that represents interbed compaction, such as SUB in MODFLOW-2005 or CSUB in MODFLOW 6.\"",
+   "title": "\"Groundwater flow and subsidence modeling\"",
+   "chunk_id": "ev-gw-modflow",
+   "score": "0.25"
+  }
+ ]
+}

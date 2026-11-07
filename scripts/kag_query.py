@@ -4,7 +4,7 @@
     cd work/kag/project/GwSubsidence && ../../.venv/bin/python ../../../../scripts/kag_query.py "question" [trace.json]
 
 Prints JSON: the answer, the trace's top-level keys and every evidence ID (ev-...) that appears anywhere in
-the trace. The full trace can be written to a file for inspection (it can contain passage text).
+the trace. With a second argument it also writes {"answer", "reference"} (what the adapter reads) to that file.
 """
 import asyncio
 import json
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     answer, trace = asyncio.run(ask(sys.argv[1]))
     if len(sys.argv) == 3:
         with open(sys.argv[2], "w") as handle:
-            json.dump(trace, handle, default=str, indent=1)
+            json.dump({"answer": answer if isinstance(answer, str) else str(answer), "reference": trace.get("reference")}, handle, default=str)
     print(json.dumps({"query": sys.argv[1], "answer": answer if isinstance(answer, str) else str(answer),
                       "trace_keys": sorted(trace) if isinstance(trace, dict) else None,
                       "evidence_ids_in_trace": sorted(ids_in(trace, set()))}, indent=1))

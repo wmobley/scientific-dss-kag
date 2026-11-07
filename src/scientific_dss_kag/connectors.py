@@ -44,8 +44,9 @@ def integration_status():
                         "scope": "anonymous GET /models and /standardvariables on the dev catalog; production host, auth and writes are not verified"},
             "svo": {"state": "crosswalk_candidates_unreviewed", "live_verified": False,
                     "note": "SVO URIs come from the catalog's sameAs links; nothing is aligned until a human accepts a crosswalk entry"},
-            "kag": {"state": "local_stack_ingest_and_query_verified_adapter_pending", "live_verified": False, "verified_on": "2026-11-07",
-                    "scope": "local OpenSPG v0.8 + KAG v0.8.0, synthetic 4-passage groundwater corpus, one ingest and one query; /retrieve mode=kag still returns 503 until the adapter exists"},
+            "kag": {"state": "local_stack_adapter_verified_once", "live_verified": True, "verified_on": "2026-11-07",
+                    "scope": "local OpenSPG v0.8 + KAG v0.8.0 with a synthetic 4-passage groundwater corpus; /retrieve mode=kag resolves retrieved chunks to canonical evidence IDs. "
+                             "Per-sentence attribution, answer quality, other domains and the production setup are not verified"},
             "pgvector": {"state": "compose_scaffold_unused", "live_verified": False}}
 
 

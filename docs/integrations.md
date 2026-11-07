@@ -2,6 +2,8 @@
 
 ## OpenSPG / KAG
 
+**Update 2026-11-07:** verified locally with OpenSPG server v0.8 (built from source), KAG v0.8.0, Neo4j 5.26 with the DozerDB plugin and MariaDB 10.5, using a synthetic 4-passage corpus. `/retrieve` with `mode: kag` (localhost Host only, because a KAG question spends 25 to 50 paid model calls) runs KAG's solver in its isolated environment and resolves every reference to a reviewed evidence record by ID, checking the text after normalisation; any unknown, candidate or altered reference rejects the whole result. KAG keeps our evidence ID as the chunk ID but not our hash or offsets, which come from our corpus. Per-sentence attribution (`chunk:N_M` tags) is not claimed. See `docs/verification.md` and `docs/setup.md`. The older notes below predate this.
+
 Status: **draft mapping; live schema import and queries unverified**. `/retrieve` with `mode: kag` fails explicitly with 503. The offline ontology mode is not KAG.
 
 The [upstream KAG README](https://github.com/OpenSPG/KAG) documents deployment using [OpenSPG's Compose configuration](https://github.com/OpenSPG/openspg/blob/master/dev/release/docker-compose-west.yml), then toolkit installation in a separate environment. This repository does not vendor or automatically launch that large stack. Review the upstream configuration, bind exposed services to localhost, change default credentials and record exact Git commits/image digests before running it. The inspected upstream README described KAG 0.8.0, but no compatibility with that or a later release is asserted.
