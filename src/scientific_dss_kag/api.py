@@ -10,6 +10,7 @@ from .domain import domain_name, load
 from .evaluation import evaluate
 from .models import Backend, EvaluationRequest, Pathway, RetrievalRequest
 from .kag_adapter import KagAdapter
+from .vector_store import PersistentEmbeddings, StaleIndex, VectorSettings, VectorStore
 from .models import Mode
 from .openai_provider import OpenAIProvider, ProviderError
 from .settings import OpenAISettings
@@ -29,7 +30,14 @@ def require_local_origin(request: Request):
     # CLI requests may omit Origin, but must still use localhost and typed JSON.
 
 
-def create_app(settings=None, provider=None, domain=None, kag=None):
+def default_store():
+    try:
+        return VectorStore(VectorSettings.from_env())
+    except ValueError:
+        return None  # no POSTGRES_PASSWORD or not loopback: the pgvector backend stays unavailable
+
+
+def create_app(settings=None, provider=None, domain=None, kag=None, store=None):
     domain = domain_name(domain)
     provider = provider or OpenAIProvider(settings or OpenAISettings.from_env())
 
@@ -41,6 +49,14 @@ def create_app(settings=None, provider=None, domain=None, kag=None):
     app = FastAPI(title="Scientific DSS KAG research testbed", version=__version__, docs_url=None, redoc_url=None, lifespan=lifespan)
     retriever = Retriever(domain=domain)
     kag = kag or KagAdapter()
+    store = store or default_store()
+
+    def embedder_for(request):
+        if request.backend == Backend.pgvector:
+            if store is None:
+                raise HTTPException(503, {"code": "pgvector_unavailable", "message": "Configure POSTGRES_PASSWORD and start the vector store (docs/setup.md)."})
+            return PersistentEmbeddings(provider, store, domain)
+        return provider
 
     @app.middleware("http")
     async def secure_headers(request, call_next):
@@ -115,11 +131,14 @@ def create_app(settings=None, provider=None, domain=None, kag=None):
             if request.mode == Mode.kag:
                 require_local_origin(http_request)  # a KAG question spends many paid model calls
                 return kag.retrieve(request, retriever)
-            if request.backend == Backend.openai:
+            if request.backend in (Backend.openai, Backend.pgvector):
                 require_local_origin(http_request)
+                embedder = embedder_for(request)
                 with provider.operation():
-                    return retriever.retrieve(request, provider)
+                    return retriever.retrieve(request, embedder)
             return retriever.retrieve(request)
+        except StaleIndex as exc:
+            raise HTTPException(409, {"code": "vector_index_stale", "message": str(exc)}) from None
         except ProviderError as exc:
             raise HTTPException(exc.status, {"code": exc.code, "message": str(exc)}) from None
         except IntegrationUnavailable as exc:
@@ -131,10 +150,13 @@ def create_app(settings=None, provider=None, domain=None, kag=None):
     def answer(request: RetrievalRequest, http_request: Request):
         require_local_origin(http_request)
         try:
+            embedder = embedder_for(request) if request.backend == Backend.pgvector else provider
             with provider.operation():
-                retrieval = retriever.retrieve(request, provider)
+                retrieval = retriever.retrieve(request, embedder)
                 result = provider.answer(request.query, retrieval)
                 return {**result, "retrieval": retrieval}
+        except StaleIndex as exc:
+            raise HTTPException(409, {"code": "vector_index_stale", "message": str(exc)}) from None
         except ProviderError as exc:
             raise HTTPException(exc.status, {"code": exc.code, "message": str(exc)}) from None
         except IntegrationUnavailable as exc:

@@ -36,7 +36,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-The API binds only to localhost. `docker compose -f compose.yaml -f compose.vector.yaml --profile vector-store up --build` additionally provisions a pgvector database. **The default retriever does not use that database.** See [setup](docs/setup.md) for validation and stopping instructions. OpenSPG uses its own upstream deployment, described in [integrations](docs/integrations.md).
+The API binds only to localhost. `docker compose -f compose.vector.yaml --env-file .env.openspg --profile vector-store up -d` provisions a local pgvector database used only by the explicit `pgvector` retrieval backend (see [setup](docs/setup.md)); **the default retriever does not use it**. See [setup](docs/setup.md) for validation and stopping instructions. OpenSPG uses its own upstream deployment, described in [integrations](docs/integrations.md).
 
 ## What students can compare
 

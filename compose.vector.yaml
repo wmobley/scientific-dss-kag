@@ -1,14 +1,21 @@
+# Local pgvector store for persistent evidence embeddings (see docs/setup.md and src/scientific_dss_kag/vector_store.py).
+# Localhost only, image pinned by digest, password from the git-ignored .env.openspg:
+#   docker compose -f compose.vector.yaml --env-file .env.openspg --profile vector-store up -d
+name: scientific-dss-vector
 services:
-  # Future external-vector experiment. Not used by the default offline retriever.
   postgres:
-    image: pgvector/pgvector:pg16
+    image: pgvector/pgvector:pg16@sha256:0dd3149a06e4579a0d70d8fef9945636cd514005e7237deb27f9b67886f8dc4f
     profiles: ["vector-store"]
+    ports:
+      - "127.0.0.1:5439:5432"
     environment:
       POSTGRES_USER: scientific_dss
       POSTGRES_DB: scientific_dss
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env before using Compose}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?run scripts/init_openspg_env.py or set POSTGRES_PASSWORD}
     volumes:
       - vector-data:/var/lib/postgresql/data
+    mem_limit: 512m
+    security_opt: [no-new-privileges:true]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U scientific_dss -d scientific_dss"]
       interval: 10s

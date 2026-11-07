@@ -9,6 +9,9 @@ from .domain import DEFAULT_DOMAIN, domain_name, load
 CONCEPTS = frozenset("DecisionProblem Stakeholder Objective Alternative Uncertainty InformationNeed ScientificMethod ComputationalModel Dataset Evidence ScientificClaim ScientificVariable Assumption ValidationActivity DecisionPathway".split())
 
 
+REMOTE_BACKENDS = (Backend.openai, Backend.pgvector)
+
+
 class IntegrationUnavailable(RuntimeError):
     pass
 
@@ -62,9 +65,9 @@ class Retriever:
             raise IntegrationUnavailable("KAG schema import and query have not been verified")
         if request.mode == Mode.ontology and not request.context:
             raise ValueError("ontology mode requires explicit decision context")
-        if request.backend == Backend.openai and request.mode == Mode.lexical:
+        if request.backend in REMOTE_BACKENDS and request.mode == Mode.lexical:
             raise ValueError("lexical mode uses the offline backend")
-        if request.backend == Backend.openai and provider is None:
+        if request.backend in REMOTE_BACKENDS and provider is None:
             raise IntegrationUnavailable("OpenAI provider is unavailable")
         # Candidate assertions never enter retrieval implicitly.
         reviewed = [e for e in self.evidence if e.review_status == "reviewed"]
@@ -77,11 +80,11 @@ class Retriever:
             return sum(min(n, words[t]) for t, n in query_terms.items()) / (len(words) or 1)
         embedding_usage = []
         provider_scores = {}
-        if request.backend == Backend.openai and candidates:
+        if request.backend in REMOTE_BACKENDS and candidates:
             provider_scores, embedding_usage = provider.embedding_scores(request.query, reviewed, self.corpus_hash)
         qv = vector(request.query)
         def cosine(e):
-            if request.backend == Backend.openai:
+            if request.backend in REMOTE_BACKENDS:
                 return provider_scores.get(e.id, 0)
             return sum(a*b for a,b in zip(qv, vector(e.passage)))
         lex = sorted(((lexical(e), e) for e in candidates), key=lambda x: (-x[0], x[1].id))
@@ -97,8 +100,8 @@ class Retriever:
                     scores[e.id] += 1/(60+rank)
             ranked = sorted(((scores[e.id],e) for e in candidates if scores[e.id]), key=lambda x: (-x[0], x[1].id))
         method = "token-overlap" if request.mode == Mode.lexical else "rrf(token-overlap,signed-char-trigram-256)"
-        if request.backend == Backend.openai:
-            method = f"rrf(token-overlap,openai:{provider.settings.embedding_model})"
+        if request.backend in REMOTE_BACKENDS:
+            method = f"rrf(token-overlap,{request.backend.value}:{provider.settings.embedding_model})"
         return {"mode": request.mode, "backend": request.backend, "embedding_usage": embedding_usage, "query": request.query, "context": request.context,
                 "corpus_hash": self.corpus_hash, "synthetic": True,
                 "method": method,

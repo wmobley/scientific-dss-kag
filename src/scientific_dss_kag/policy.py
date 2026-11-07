@@ -90,11 +90,13 @@ def _env_value(root, name):
 
 def check_openspg(root, violations):
     """The OpenSPG compose file and rendered KAG config must keep all LLM traffic on the gateway."""
-    compose = root / "compose.openspg.yaml"
-    if compose.is_file():
+    for compose_name in ("compose.openspg.yaml", "compose.vector.yaml"):
+        compose = root / compose_name
+        if not compose.is_file():
+            continue
         services = (yaml.safe_load(compose.read_text()) or {}).get("services", {})
         for name, service in services.items():
-            where = f"compose.openspg.yaml: service '{name}'"
+            where = f"{compose_name}: service '{name}'"
             if "build" not in service and "@sha256:" not in service.get("image", ""):
                 violations.append(f"{where}: image is not pinned by digest")
             for port in service.get("ports", []):

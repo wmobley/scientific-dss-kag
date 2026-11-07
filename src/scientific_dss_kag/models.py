@@ -16,6 +16,7 @@ class Mode(StrEnum):
 class Backend(StrEnum):
     offline = "offline"
     openai = "openai"
+    pgvector = "pgvector"  # query embedded live, corpus vectors read from PostgreSQL
 
 
 class RetrievalRequest(StrictModel):

@@ -185,6 +185,19 @@ class OpenAIProvider:
             return "Instruct: Given a scientific question, retrieve evidence passages that answer it\nQuery: " + query
         return query
 
+    def embed_query(self, query):
+        """One embedding of the query (with the model's query instruction, if it needs one). Returns (vector, usage)."""
+        vectors, usage = self._embed([self.query_text(query)])
+        return vectors[0], usage
+
+    def embed_corpus(self, evidence):
+        """Embed reviewed passages in one batched call, within the same bounds as the in-memory path."""
+        if not evidence:
+            raise ProviderError("openai_input_limit", "There is no reviewed evidence to embed.", 422)
+        if len(evidence) > 100 or any(len(e.passage) > 4000 for e in evidence) or sum(len(e.passage) for e in evidence) > 100000:
+            raise ProviderError("openai_input_limit", "Embedding corpus exceeds this research demo's bounds.", 422)
+        return self._embed([e.passage for e in evidence])
+
     def embedding_scores(self, query, evidence, corpus_hash):
         if not evidence:
             return {}, []

@@ -39,7 +39,7 @@ Status: **synthetic alignment fixtures only**. Fixture `svo_uri` values are null
 
 ## PostgreSQL / pgvector
 
-Status: **optional Compose scaffold; unused by retrieval**. Provisioning a database does not establish working hybrid RAG. Future work must add migrations, source/evidence indexing, real embedding version records, transactional validation and comparison against the same evaluation corpus.
+**Update 2026-11-07:** implemented and verified locally. `vector-migrate`, `vector-index`, `vector-status` and `compare-backends` manage a persistent index of reviewed-evidence embeddings (E5-Mistral-7B-Instruct, 4096 dimensions, exact search); `/retrieve` and `/answer` accept `backend: pgvector`, embed only the query, and fail with 409 `vector_index_stale` when the index no longer matches the corpus or model. On the synthetic groundwater corpus the stored vectors reproduce the in-memory similarities to 6e-7 (float32 rounding) with identical rankings (`experiments/benchmarks/groundwater-subsidence-backend-comparison.json`; 4 cases, so the metrics saturate and do not rank the methods). Not verified: larger corpora, approximate indexes, concurrent writers, production deployment. See setup.md for commands.
 
 ## OpenAI-compatible LLM endpoint
 

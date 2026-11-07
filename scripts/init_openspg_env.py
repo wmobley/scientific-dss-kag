@@ -8,7 +8,7 @@ from pathlib import Path
 path = Path(".env.openspg")
 if path.exists():
     sys.exit(f"{path} already exists; leaving it unchanged.")
-names = ("OPENSPG_MYSQL_PASSWORD", "OPENSPG_NEO4J_PASSWORD", "OPENSPG_JASYPT_PASSWORD", "DSS_GATEWAY_TOKEN")
+names = ("OPENSPG_MYSQL_PASSWORD", "OPENSPG_NEO4J_PASSWORD", "OPENSPG_JASYPT_PASSWORD", "DSS_GATEWAY_TOKEN", "POSTGRES_PASSWORD")
 lines = ["# Generated local passwords for compose.openspg.yaml. Git-ignored. Never commit.",
          *(f"{name}={secrets.token_hex(16)}" for name in names)]
 descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)

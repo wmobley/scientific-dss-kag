@@ -19,13 +19,27 @@ Copy `.env.example` to `.env` locally if needed; replace the database password o
 ```bash
 docker compose config --quiet
 docker compose up --build
-# Optional unused vector-store experiment infrastructure:
-docker compose -f compose.yaml -f compose.vector.yaml --profile vector-store up --build
 # Stop without deleting retained database volumes:
 docker compose stop
 ```
 
-The optional database has no published host port. Its named volume is retained. No automatic SQL migrations, vector indexing or database retrieval are implemented. `config --quiet` verifies configuration only; it does not prove container images build or services run.
+`config --quiet` verifies configuration only; it does not prove container images build or services run.
+
+## Persistent embeddings (pgvector)
+
+Optional and local. The vector store keeps one embedding per reviewed evidence passage, per domain and embedding model, and the `pgvector` retrieval backend embeds only the query at request time.
+
+```bash
+python scripts/init_openspg_env.py            # creates .env.openspg incl. POSTGRES_PASSWORD (skip if it exists)
+docker compose -f compose.vector.yaml --env-file .env.openspg --profile vector-store up -d   # 127.0.0.1:5439, image pinned by digest
+set -a; . ./.env.openspg; set +a              # exports POSTGRES_PASSWORD (and the gateway token) for the commands below
+uv run scientific-dss vector-migrate          # applies the bundled SQL once; safe to repeat
+uv run scientific-dss vector-index --domain groundwater-subsidence     # explicit and paid: one batched embedding call
+uv run scientific-dss vector-status --domain groundwater-subsidence
+uv run scientific-dss compare-backends --domain groundwater-subsidence # len(cases) + 1 embedding calls
+```
+
+Point the commands at the gateway with `DSS_GATEWAY_URL` as for any model call. Then `POST /retrieve` with `"backend": "pgvector"` (localhost Host only). If the corpus or model changed since the build, or the index is partial, the API answers 409 `vector_index_stale` and tells you to rebuild; it never answers from stale vectors. The 4096-dimension vectors have no approximate index (pgvector indexes at most 2000 dimensions, or 4000 as `halfvec`), so search is exact, which is fine for a corpus of this size. Stored vectors are float32, so similarities differ from the in-memory backend by about 1e-6. Tests that need the database run only when `POSTGRES_PASSWORD` is exported and the database answers; otherwise they skip. `docker compose -f compose.vector.yaml --env-file .env.openspg --profile vector-store down -v` also deletes the stored vectors (rebuildable).
 
 ## Ontology validation
 

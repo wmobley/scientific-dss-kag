@@ -18,7 +18,7 @@ Pydantic validates API and evidence record types. Application provenance checks 
 
 `CatalogClient` accepts an operator-configured HTTPS base URL and supports GET of `models` and `standardvariables`, a bounded first page only. It does not execute or register models. Endpoint shapes were checked against local catalog OpenAPI and are tested using HTTP mocks; no live service compatibility has been established. The fixture variable alignment is not an SVO lookup implementation. Draft SPG schema/mapping preserves selected directed relations and explicitly loses OWL/SHACL semantics. Provenance literals remain outside its initial projection.
 
-The optional Compose pgvector service is infrastructure scaffolding only. A production version needs persistent ingestion, semantic embeddings, authentication, isolated projects, provenance-preserving graph indexing and independently evaluated scientific applicability.
+The optional pgvector service backs the explicit `pgvector` retrieval backend: reviewed evidence is embedded once, stored with its model, dimension and corpus hash, and checked for staleness on every query. A production version still needs authenticated and isolated projects, approximate indexing for larger corpora and independently evaluated scientific applicability.
 
 ## OpenAI provider
 

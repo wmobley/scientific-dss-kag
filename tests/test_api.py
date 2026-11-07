@@ -42,7 +42,8 @@ def test_kag_unavailable_and_catalog_honesty():
         assert client.post('/retrieve',json={'query':'x','mode':'kag'}).status_code == 403
     with TestClient(create_app(settings=OpenAISettings())) as client:
         status = client.get('/integrations').json()
-        assert [status[k]['live_verified'] for k in ('svo', 'pgvector')] == [False, False]
+        assert status['svo']['live_verified'] is False
+        assert status['pgvector']['live_verified'] is True and 'exact search' in status['pgvector']['scope']
         assert status['kag']['live_verified'] is True and 'Per-sentence attribution' in status['kag']['scope']
         assert status['catalog']['live_verified'] is True and 'production host' in status['catalog']['scope']
         assert 'unreviewed' in status['svo']['state']

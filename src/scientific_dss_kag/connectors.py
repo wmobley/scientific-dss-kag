@@ -47,7 +47,9 @@ def integration_status():
             "kag": {"state": "local_stack_adapter_verified_once", "live_verified": True, "verified_on": "2026-11-07",
                     "scope": "local OpenSPG v0.8 + KAG v0.8.0 with a synthetic 4-passage groundwater corpus; /retrieve mode=kag resolves retrieved chunks to canonical evidence IDs. "
                              "Per-sentence attribution, answer quality, other domains and the production setup are not verified"},
-            "pgvector": {"state": "compose_scaffold_unused", "live_verified": False}}
+            "pgvector": {"state": "persistent_index_verified_locally", "live_verified": True, "verified_on": "2026-11-07",
+                         "scope": "local pgvector 0.x on PostgreSQL 16, E5-Mistral-7B-Instruct vectors (4096 dimensions, exact search, no ANN index) for the synthetic groundwater corpus; "
+                                  "similarities match the in-memory backend within float32 rounding. Not verified: larger corpora, approximate indexes, concurrent writers"}}
 
 
 class CatalogClient:

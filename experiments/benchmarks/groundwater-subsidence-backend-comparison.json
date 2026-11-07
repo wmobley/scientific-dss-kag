@@ -1,0 +1,377 @@
+{
+  "version": "0.1.0",
+  "domain": "groundwater-subsidence",
+  "corpus_hash": "124c012069039939902f315a381e0953a20320bc1eeb9ba46cb8d5c5a121f9a5",
+  "embedding_model": "E5-Mistral-7B-Instruct",
+  "dimension": 4096,
+  "k": 3,
+  "cases": 4,
+  "model_calls": 5,
+  "max_abs_cosine_difference_memory_vs_pgvector": 6.080187213708399e-07,
+  "identical_rankings_memory_vs_pgvector": true,
+  "summary": {
+    "offline/hybrid": {
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 0.875
+    },
+    "offline/ontology": {
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    "openai_in_memory/hybrid": {
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    "openai_in_memory/ontology": {
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    "pgvector/hybrid": {
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    "pgvector/ontology": {
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    }
+  },
+  "rows": [
+    {
+      "backend": "offline",
+      "mode": "hybrid",
+      "case_id": "permanent-subsidence",
+      "retrieved_ids": [
+        "ev-gw-drawdown",
+        "ev-gw-decision",
+        "ev-gw-observations"
+      ],
+      "expected_ids": [
+        "ev-gw-drawdown"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "offline",
+      "mode": "hybrid",
+      "case_id": "modflow-requirements",
+      "retrieved_ids": [
+        "ev-gw-decision",
+        "ev-gw-modflow",
+        "ev-gw-drawdown"
+      ],
+      "expected_ids": [
+        "ev-gw-modflow"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 0.5
+    },
+    {
+      "backend": "offline",
+      "mode": "hybrid",
+      "case_id": "observation-reconciliation",
+      "retrieved_ids": [
+        "ev-gw-observations",
+        "ev-gw-drawdown",
+        "ev-gw-modflow"
+      ],
+      "expected_ids": [
+        "ev-gw-observations"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "offline",
+      "mode": "hybrid",
+      "case_id": "pumping-decision",
+      "retrieved_ids": [
+        "ev-gw-decision",
+        "ev-gw-modflow",
+        "ev-gw-drawdown"
+      ],
+      "expected_ids": [
+        "ev-gw-decision"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "offline",
+      "mode": "ontology",
+      "case_id": "permanent-subsidence",
+      "retrieved_ids": [
+        "ev-gw-drawdown"
+      ],
+      "expected_ids": [
+        "ev-gw-drawdown"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "offline",
+      "mode": "ontology",
+      "case_id": "modflow-requirements",
+      "retrieved_ids": [
+        "ev-gw-modflow"
+      ],
+      "expected_ids": [
+        "ev-gw-modflow"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "offline",
+      "mode": "ontology",
+      "case_id": "observation-reconciliation",
+      "retrieved_ids": [
+        "ev-gw-observations"
+      ],
+      "expected_ids": [
+        "ev-gw-observations"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "offline",
+      "mode": "ontology",
+      "case_id": "pumping-decision",
+      "retrieved_ids": [
+        "ev-gw-decision"
+      ],
+      "expected_ids": [
+        "ev-gw-decision"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "openai_in_memory",
+      "mode": "hybrid",
+      "case_id": "permanent-subsidence",
+      "retrieved_ids": [
+        "ev-gw-drawdown",
+        "ev-gw-decision",
+        "ev-gw-observations"
+      ],
+      "expected_ids": [
+        "ev-gw-drawdown"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "openai_in_memory",
+      "mode": "hybrid",
+      "case_id": "modflow-requirements",
+      "retrieved_ids": [
+        "ev-gw-modflow",
+        "ev-gw-decision",
+        "ev-gw-drawdown"
+      ],
+      "expected_ids": [
+        "ev-gw-modflow"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "openai_in_memory",
+      "mode": "hybrid",
+      "case_id": "observation-reconciliation",
+      "retrieved_ids": [
+        "ev-gw-observations",
+        "ev-gw-drawdown",
+        "ev-gw-decision"
+      ],
+      "expected_ids": [
+        "ev-gw-observations"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "openai_in_memory",
+      "mode": "hybrid",
+      "case_id": "pumping-decision",
+      "retrieved_ids": [
+        "ev-gw-decision",
+        "ev-gw-drawdown",
+        "ev-gw-modflow"
+      ],
+      "expected_ids": [
+        "ev-gw-decision"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "openai_in_memory",
+      "mode": "ontology",
+      "case_id": "permanent-subsidence",
+      "retrieved_ids": [
+        "ev-gw-drawdown"
+      ],
+      "expected_ids": [
+        "ev-gw-drawdown"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "openai_in_memory",
+      "mode": "ontology",
+      "case_id": "modflow-requirements",
+      "retrieved_ids": [
+        "ev-gw-modflow"
+      ],
+      "expected_ids": [
+        "ev-gw-modflow"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "openai_in_memory",
+      "mode": "ontology",
+      "case_id": "observation-reconciliation",
+      "retrieved_ids": [
+        "ev-gw-observations"
+      ],
+      "expected_ids": [
+        "ev-gw-observations"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "openai_in_memory",
+      "mode": "ontology",
+      "case_id": "pumping-decision",
+      "retrieved_ids": [
+        "ev-gw-decision"
+      ],
+      "expected_ids": [
+        "ev-gw-decision"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "pgvector",
+      "mode": "hybrid",
+      "case_id": "permanent-subsidence",
+      "retrieved_ids": [
+        "ev-gw-drawdown",
+        "ev-gw-decision",
+        "ev-gw-observations"
+      ],
+      "expected_ids": [
+        "ev-gw-drawdown"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "pgvector",
+      "mode": "hybrid",
+      "case_id": "modflow-requirements",
+      "retrieved_ids": [
+        "ev-gw-modflow",
+        "ev-gw-decision",
+        "ev-gw-drawdown"
+      ],
+      "expected_ids": [
+        "ev-gw-modflow"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "pgvector",
+      "mode": "hybrid",
+      "case_id": "observation-reconciliation",
+      "retrieved_ids": [
+        "ev-gw-observations",
+        "ev-gw-drawdown",
+        "ev-gw-decision"
+      ],
+      "expected_ids": [
+        "ev-gw-observations"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "pgvector",
+      "mode": "hybrid",
+      "case_id": "pumping-decision",
+      "retrieved_ids": [
+        "ev-gw-decision",
+        "ev-gw-drawdown",
+        "ev-gw-modflow"
+      ],
+      "expected_ids": [
+        "ev-gw-decision"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "pgvector",
+      "mode": "ontology",
+      "case_id": "permanent-subsidence",
+      "retrieved_ids": [
+        "ev-gw-drawdown"
+      ],
+      "expected_ids": [
+        "ev-gw-drawdown"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "pgvector",
+      "mode": "ontology",
+      "case_id": "modflow-requirements",
+      "retrieved_ids": [
+        "ev-gw-modflow"
+      ],
+      "expected_ids": [
+        "ev-gw-modflow"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "pgvector",
+      "mode": "ontology",
+      "case_id": "observation-reconciliation",
+      "retrieved_ids": [
+        "ev-gw-observations"
+      ],
+      "expected_ids": [
+        "ev-gw-observations"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "backend": "pgvector",
+      "mode": "ontology",
+      "case_id": "pumping-decision",
+      "retrieved_ids": [
+        "ev-gw-decision"
+      ],
+      "expected_ids": [
+        "ev-gw-decision"
+      ],
+      "recall_at_k": 1.0,
+      "reciprocal_rank": 1.0
+    }
+  ],
+  "limitations": "Synthetic teaching corpus with a handful of cases: the metrics saturate and do not rank the methods. What this does show is that the database search reproduces the in-memory similarity. KAG is not included (each KAG question costs 25 to 50 paid model calls)."
+}
