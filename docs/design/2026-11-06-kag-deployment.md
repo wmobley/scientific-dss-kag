@@ -1,7 +1,7 @@
 # M2 issue #1: deploy and verify OpenSPG/KAG (deployment plan)
 
 ## Status
-Implementing (infrastructure only; KAG client install awaits approval)
+Implemented (local verification; no production deployment)
 
 ## Objective
 Run a pinned, localhost-only OpenSPG server, commit the draft decision-pathways schema, ingest a domain's synthetic evidence through KAG using only our rate-limited LLM gateway, answer a question through KAG, and verify that citations (our canonical evidence ID, source hash and offsets) survive. Then replace the 503 on `/retrieve mode=kag` with a real adapter. Parent spec: `2026-11-06-m2-verified-integrations.md`.
