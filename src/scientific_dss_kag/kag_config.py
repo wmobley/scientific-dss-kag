@@ -43,6 +43,17 @@ def render_kag_config(template, *, gateway_url, gateway_token, openie_model, cha
     pipeline = config["kag_builder_pipeline"]
     pipeline["scanner"] = {"type": "csv_scanner"}
     pipeline["chain"]["reader"] = {"type": "dict_reader", "id_col": "idx", "name_col": "title", "content_col": "text"}
+    # KAG v0.8.0's knowledge-unit extractor cannot be used: its prompt shows "Core Entities" as a dict in one
+    # example and a comma string in another, and the extractor only accepts the string (every model we tried
+    # imitates the dict and crashes it). The older schema-free extractor with KAG's default English prompts is
+    # the supported path, and the solver retriever that pairs with it is kg_fr_open_spg.
+    pipeline["chain"]["extractor"] = {"type": "schema_free_extractor", "llm": config["openie_llm"],
+                                      "ner_prompt": {"type": "default_ner"}, "std_prompt": {"type": "default_std"},
+                                      "triple_prompt": {"type": "default_triple"}}
+    config["kg_fr"]["type"] = "kg_fr_open_spg"
+    # The template's solver generator `default_generator` names a module that does not exist in v0.8.0; the
+    # runnable medicine example uses llm_index_generator with the same prompt and reference settings.
+    config["kag_solver_pipeline"]["generator"]["type"] = "llm_index_generator"
     pipeline["num_chains"] = 1  # concurrency stays low: the shared endpoint allows 100 calls/minute in total
     pipeline["num_threads_per_chain"] = 1
     return config

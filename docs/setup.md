@@ -43,3 +43,18 @@ If port 8091 is busy, change the uvicorn port or DSS_PORT. If Docker is unavaila
 ## OpenAI
 
 Read openai.md to configure server-side credentials and enable explicit paid actions. Both direct Python startup from the checkout and Compose support the local .env. Use one server worker; restarting resets the in-memory vector cache and process request budget. Never run `docker compose config` without `--quiet` when sharing output: expanded configuration may contain the API key. Default tests/benchmark do not call OpenAI.
+
+## OpenSPG / KAG local stack (M2 verification)
+
+Everything here is local, localhost-only and uses synthetic data. See `docs/design/2026-11-06-kag-deployment.md` for why each step exists. Docker Desktop needs roughly 5 GB free for the stack (server about 1.4 GB, Neo4j about 1 GB, MariaDB about 0.1 GB, plus the server image build); stop other containers or raise Docker's memory first.
+
+1. Sources (tags are pinned): `git clone --depth 1 --branch v0.8 https://github.com/OpenSPG/openspg.git work/openspg/src` and `git clone --depth 1 --branch v0.8.0 https://github.com/OpenSPG/KAG.git work/kag/KAG`.
+2. DozerDB plugin (GPL-3.0; adds the per-project `CREATE DATABASE` that KAG needs): download `dozerdb-plugin-5.26.32-1.2.0.jar` and its `.sha256` from the `5.26.32-1.2.0` release of github.com/DozerDB/dozerdb into `work/neo4j-plugins/`. The Neo4j image build re-verifies the checksum.
+3. `python scripts/init_openspg_env.py` creates `.env.openspg` (random passwords and the gateway token, mode 0600, git-ignored).
+4. Start the gateway so every model call is rate limited and capped: `DSS_GATEWAY_TOKEN=... DSS_LLM_MAX_CALLS=200 uv run scientific-dss gateway`.
+5. `docker compose -f compose.openspg.yaml --env-file .env.openspg up -d --build`. The server is built from source with Maven (several minutes the first time).
+6. KAG client: `uv venv --python 3.10 work/kag/.venv && uv pip install --python work/kag/.venv/bin/python -c openspg/kag-constraints.txt -e work/kag/KAG`.
+7. `uv run python scripts/render_kag_config.py --domain groundwater-subsidence`, then from `work/kag/project`: `../.venv/bin/python ../../../scripts/kag_create_project.py ../kag_config.yaml`, copy `work/kag/kag_config.yaml` over the project's `kag_config.yaml`, run `python scripts/compose_kag_schema.py work/kag/project/GwSubsidence/schema/GwSubsidence.schema`, then `knext schema commit` in the project directory.
+8. Ingest and query from the project directory with `scripts/kag_ingest.py ../../evidence.csv` and `scripts/kag_query.py "question"` (both run with the KAG virtualenv's python).
+
+Stop with `docker compose -f compose.openspg.yaml --env-file .env.openspg stop`; `down -v` also deletes the graph, MySQL and Neo4j volumes (synthetic data only).

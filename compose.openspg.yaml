@@ -60,9 +60,13 @@ services:
     security_opt: [no-new-privileges:true]
 
   neo4j:
-    # Official 5.26 LTS image. The server creates vector indexes with `CREATE VECTOR INDEX`, which
-    # Neo4j 4.4 lacks (5.13+ only). The server's 4.4.7 Java driver still speaks Bolt to 5.x.
-    image: neo4j:5.26@sha256:42ef3ebfd671ebd01fdebb6dcbe80cf7b45eef2aa3d346ef4132f7ef31e67d2f
+    # Official 5.26 LTS image plus the DozerDB plugin (see openspg/Dockerfile.neo4j). The server creates
+    # vector indexes with `CREATE VECTOR INDEX` (Neo4j 5.13+ only) and one database per KAG project.
+    # The server's 4.4.7 Java driver still speaks Bolt to 5.x.
+    build:
+      context: work/neo4j-plugins
+      dockerfile: ../../openspg/Dockerfile.neo4j
+    image: scientific-dss-openspg-neo4j:5.26.32-dozerdb-1.2.0
     container_name: release-openspg-neo4j
     ports:
       - "127.0.0.1:7474:7474"

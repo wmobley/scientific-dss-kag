@@ -22,7 +22,8 @@ kag_builder_pipeline:
   num_chains: 16
   num_threads_per_chain: 4
   scanner: {type: hotpotqa_dataset_scanner}
-kag_solver_pipeline: {planner: {llm: *chat_llm}, retriever: {vectorize_model: *vec}}
+kg_fr: &kg_fr {type: kg_fr_knowledge_unit, top_k: 20}
+kag_solver_pipeline: {planner: {llm: *chat_llm}, retriever: {vectorize_model: *vec}, executors: [{retrievers: [*kg_fr]}], generator: {type: default_generator, llm_client: *chat_llm, enable_ref: true}}
 """)
 
 
@@ -95,3 +96,29 @@ def test_real_kag_template_has_no_remaining_foreign_endpoint():
     assert urls == {GATEWAY}, urls
     text = dump_config(config)
     assert "dashscope" not in text and "siliconflow" not in text and "aliyun" not in text.lower()
+
+
+def test_uses_the_schema_free_extractor_and_matching_solver_retriever():
+    config = render()
+    extractor = config["kag_builder_pipeline"]["chain"]["extractor"]
+    assert extractor["type"] == "schema_free_extractor"  # not knowledge_unit_extractor (KAG 0.8.0 prompt bug)
+    assert [extractor[k]["type"] for k in ("ner_prompt", "std_prompt", "triple_prompt")] == ["default_ner", "default_std", "default_triple"]
+    assert extractor["llm"]["model"] == "Qwen3-235B-A22B-Instruct-2507" and extractor["llm"]["base_url"] == GATEWAY
+    assert config["kg_fr"]["type"] == "kg_fr_open_spg"
+    assert config["kag_solver_pipeline"]["executors"][0]["retrievers"][0]["type"] == "kg_fr_open_spg"  # shared via the YAML alias
+    assert "knowledge_unit" not in dump_config(config).replace("kg_fr_knowledge_unit", "")
+
+
+@pytest.mark.skipif(not REAL_TEMPLATE.is_file(), reason="pinned KAG checkout not present")
+def test_real_template_pairs_schema_free_extractor_with_open_spg_retriever():
+    config = render_kag_config(yaml.safe_load(REAL_TEMPLATE.read_text()), gateway_url=GATEWAY, gateway_token=TOKEN,
+                               openie_model="a", chat_model="b", embedding_model="c", vector_dimensions=4096, namespace="GwSubsidence")
+    assert config["kag_builder_pipeline"]["chain"]["extractor"]["type"] == "schema_free_extractor"
+    assert config["kg_fr"]["type"] == "kg_fr_open_spg"
+    assert "kg_fr_knowledge_unit" not in dump_config(config)
+
+
+def test_solver_generator_is_a_registered_type_with_references_enabled():
+    generator = render()["kag_solver_pipeline"]["generator"]
+    assert generator["type"] == "llm_index_generator"  # `default_generator` does not exist in KAG v0.8.0
+    assert generator["enable_ref"] is True and generator["llm_client"]["base_url"] == GATEWAY

@@ -1,0 +1,11 @@
+# Official Neo4j 5.26 Community plus the DozerDB plugin (GPL-3.0, https://github.com/DozerDB/dozerdb).
+# KAG creates one Neo4j database per project (CREATE DATABASE), which Community lacks; DozerDB adds it.
+# Build context: work/neo4j-plugins, holding the release JAR and its published .sha256 (docs/setup.md).
+# Per DozerDB's README the JAR goes in Neo4j's lib/ directory (not plugins/); the Neo4j tag must match
+# the release (5.26.32). The checksum is re-verified here so the image never contains an unchecked JAR.
+FROM neo4j:5.26@sha256:42ef3ebfd671ebd01fdebb6dcbe80cf7b45eef2aa3d346ef4132f7ef31e67d2f
+COPY dozerdb-plugin-5.26.32-1.2.0.jar dozerdb-plugin-5.26.32-1.2.0.jar.sha256 /tmp/plugin/
+RUN cd /tmp/plugin && sha256sum -c dozerdb-plugin-5.26.32-1.2.0.jar.sha256 \
+    && cp dozerdb-plugin-5.26.32-1.2.0.jar /var/lib/neo4j/lib/ \
+    && chown neo4j:neo4j /var/lib/neo4j/lib/dozerdb-plugin-5.26.32-1.2.0.jar \
+    && rm -rf /tmp/plugin
